@@ -70,7 +70,7 @@ def insertAttractionsSql(i):
             mycursor.execute(sql)
             db.commit()
 
-
+createAttractionsTable()
 with open("taipei-attractions.json", mode="r", encoding="utf-8") as file:
     file = json.load(file)
     file = file["result"]["results"]
