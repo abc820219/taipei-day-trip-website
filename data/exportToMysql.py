@@ -6,7 +6,7 @@ import re
 db = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="root",
+    password="z27089433",
     database="website"
 )
 mycursor = db.cursor()
