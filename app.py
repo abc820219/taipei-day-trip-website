@@ -87,7 +87,6 @@ def getAttractionsHandler():
         rowData['longitude'] = data[i][9]
         rowData['images'] = data[i][10]
         result['data'].insert(i, rowData)
-
     return result
 
 
@@ -95,7 +94,19 @@ def getAttractionsHandler():
 def attractionHandler(attractionId):
     sql = f"select * from attractions where id like '{attractionId}'"
     mycursor.execute(sql)
-    result = mycursor.fetchone()
+    data = mycursor.fetchone()
+    result = {}
+    result['pid'] = data[0]
+    result['id'] = data[1]
+    result['name'] = data[2]
+    result['category'] = data[3]
+    result['description'] = data[4]
+    result['address'] = data[5]
+    result['transport'] = data[6]
+    result['mrt'] = data[7]
+    result['latitude'] = data[8]
+    result['longitude'] = data[9]
+    result['images'] = data[10]
     return json.dumps(result)
 
 
