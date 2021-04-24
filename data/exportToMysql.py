@@ -20,7 +20,7 @@ mycursor = db.cursor()
 def createAttractionsTable():
     sql = "create table attractions(pid bigint not null auto_increment primary key comment '流水號',id int not null, name varchar(255) not null comment '景點名稱', category varchar(255) comment '景點分類', description text comment '景點描述', address varchar(255) comment '景點地址', transport text comment '交通方式', mrt varchar(255) comment '捷運', latitude double comment '緯度', longitude double comment '經度', images text comment '圖片')"
     mycursor.execute(sql)
-createAttractionsTable()
+# createAttractionsTable()
 
 
 def insertAttractionsSql(i):
