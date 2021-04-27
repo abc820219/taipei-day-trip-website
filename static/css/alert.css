@@ -1,0 +1,62 @@
+.alert {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.25);
+    z-index: -10;
+    opacity: 0;
+   
+}
+
+.alert--active {
+    transition: opacity .3s;
+    opacity: 1;
+    z-index: 10;
+}
+
+.alert-form {
+    position: absolute;
+    padding: 15px;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 5px;
+    border-top: 10px solid var(--primary);
+    width: 310px;
+    background-color: var(--white-primary);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.alert-form h3 {
+    position: relative;
+    height: 27px;
+    line-height: 27px;
+    margin-bottom: 15px;
+    font-size: 24px;
+    color: var(--text-primary);
+}
+
+.alert-form h3 img {
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+}
+
+.alert-form input {
+    border: 1px solid var(--text-secondary);
+    border-radius: 3px;
+    margin-bottom: 10px;
+    padding-left: 15px;
+    height: 45px;
+}
+
+.alert-form button {
+    height: 47px;
+    font-size: 19px;
+    margin-bottom: 10px;
+}
