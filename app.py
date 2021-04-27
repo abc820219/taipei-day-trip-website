@@ -1,4 +1,5 @@
 from flask import *
+from flask_cors import CORS
 import math
 import mysql.connector
 # 連線
