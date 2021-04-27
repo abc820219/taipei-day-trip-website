@@ -1,0 +1,8 @@
+.footer {
+    text-align: center;
+    line-height: 104px;
+    height: 104px;
+    background-color: var(--text-secondary);
+    color: var(--white-primary);
+    font-weight: bold;
+}

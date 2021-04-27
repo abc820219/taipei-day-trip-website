@@ -1,4 +1,5 @@
 from flask import *
+from flask_cors import CORS
 import math
 import mysql.connector
 # 連線
@@ -13,7 +14,7 @@ mycursor = mydb.cursor()
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"] = False
 app.config["TEMPLATES_AUTO_RELOAD"] = True
-
+CORS(app)
 # Pages
 
 
@@ -37,8 +38,6 @@ def thankyou():
     return render_template("thankyou.html")
 
 # API
-
-
 @app.route("/api/attractions")
 def getAttractionsHandler():
     keyword = request.args.get('keyword')
@@ -67,7 +66,7 @@ def getAttractionsHandler():
     nextPage = page + 1
 
     if nextPage > lastPage:
-        nextPage = 0
+        nextPage = None
 
     result = {}
     result['data'] = []
@@ -111,3 +110,4 @@ def attractionHandler(attractionId):
 
 
 app.run(host="0.0.0.0", port=3000)
+# app.run(port=3000)
