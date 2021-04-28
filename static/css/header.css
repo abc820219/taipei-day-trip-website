@@ -1,6 +1,11 @@
 .header {
+    position: sticky;
+    top: 0;
+    left: 0;
     line-height: 54px;
     height: 54px;
+    background-color: var(--white-primary);
+    z-index: 20;
 }
 
 .header > ul > li {
