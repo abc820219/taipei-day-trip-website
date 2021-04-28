@@ -1,6 +1,7 @@
 from flask import *
 from flask_cors import CORS
 import mysql.connector
+from controller._init_ import controllerApp
 # 連線
 mydb = mysql.connector.connect(
     host="localhost",
@@ -11,6 +12,7 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor()
 
 app = Flask(__name__)
+app.register_blueprint(controllerApp)
 app.config["JSON_AS_ASCII"] = False
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 CORS(app)
@@ -36,7 +38,5 @@ def booking():
 def thankyou():
     return render_template("thankyou.html")
 
-from controller import *
-
-app.run(host="0.0.0.0", port=3000)
-# app.run(port=3000)
+# app.run(host="0.0.0.0", port=3000)
+app.run(port=3000)

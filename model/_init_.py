@@ -10,12 +10,14 @@ mycursor = mydb.cursor()
 
 # sqlFunction
 
+
 def get_attractions_count(keyword):
     if keyword:
         sql = f"select count(*) from attractions where name like '%{keyword}%'"
     else:
         sql = f"select count(*) from attractions"
-    return mycursor.execute(sql)
+    mycursor.execute(sql)
+    return mycursor.fetchone()[0]
 
 
 def get_attractions_list(startPage, perpage, keyword):
@@ -48,17 +50,17 @@ class AttractionsRow:
         self.longitude = longitude
         self.images = images
 
-    def getData():
-        return {
-            pid = self.pid
-            id = self.id
-            name = self.name
-            category = self.category
-            description = self.description
-            address = self.address
-            transport = self.transport
-            mrt = self.mrt
-            latitude = self.latitude
-            longitude = self.longitude
-            images = self.images
-        }
+    def getData(self):
+        rowData = {}
+        rowData["pid"] = self.pid
+        rowData["id"] = self.id
+        rowData["name"] = self.name
+        rowData["category"] = self.category
+        rowData["description"] = self.description
+        rowData["address"] = self.address
+        rowData["transport"] = self.transport
+        rowData["mrt"] = self.mrt
+        rowData["latitude"] = self.latitude
+        rowData["longitude"] = self.longitude
+        rowData["images"] = self.images
+        return rowData
