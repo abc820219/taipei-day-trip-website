@@ -2,27 +2,28 @@
     position: sticky;
     top: 0;
     left: 0;
-    line-height: 54px;
-    height: 54px;
     background-color: var(--white-primary);
     z-index: 20;
 }
 
-.header > ul > li {
+.header > div {
+    line-height: 54px;
+    height: 54px;
+}
+
+.header > div > ul > li {
     margin: 10px;
     color: var(--text-secondary);
 }
 
-
-.header > h1 {
+.header > div > h1 {
     font-size: 30px;
     font-weight: bold;
     color: var(--primary);
 }
 
-
 @media (max-width: 1024px) {
-    .header{
+    .header {
         padding: 0 10px;
     }
 }

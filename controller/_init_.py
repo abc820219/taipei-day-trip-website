@@ -27,7 +27,6 @@ def getAttractionsHandler():
     result = {}
     result['data'] = []
     result['page'] = nextPage
-
     for i in range(len(data)):
         rowData = model.AttractionsRow(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4], data[i][5], data[i][6], data[i][7], data[i][8], data[i][9], data[i][10])
         result['data'].insert(i, rowData)
