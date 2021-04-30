@@ -9,6 +9,7 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 # Pages
 import os
 from dotenv import load_dotenv
+load_dotenv()
 
 @app.route("/")
 def index():
