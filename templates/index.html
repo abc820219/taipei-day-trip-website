@@ -105,7 +105,7 @@
                         <p>${name}</p>
                         <div class="d-flex justify-content-between">
                             <span>${(mrt === 'None') | !mrt ? '無' : mrt}</span>
-                            <span>${category.replace(/\s*/g,"")}</span>
+                            <span>${category.replace(/\s*/g, '')}</span>
                         </div>
                     </li>
                     `
@@ -151,9 +151,7 @@
                           )
                     scrollFlag = false
                     $ajax
-                        .get(
-                            `/api/attractions?page=${page}&keyword=${keyword}`
-                        )
+                        .get(`/api/attractions?page=${page}&keyword=${keyword}`)
                         .then((res) => {
                             page = res.data.page
                             if (!res.data.data.length || !res.data.data) {
@@ -199,20 +197,44 @@
                             scrollFlag = true
                         })
                 }
+                // function scrollToBottomGetDataHandler(minusHeight = 60) {
+                //     window.onscroll = () => {
+                //         if (scrollFlag) {
+                //             let pageHeight =
+                //                 document.body.getBoundingClientRect().height -
+                //                 minusHeight //總高度
+                //             let clientHeight =
+                //                 document.documentElement.clientHeight // 可視區
+                //             let scrollTop = document.documentElement.scrollTop //捲去高度
+                //             if (scrollTop + clientHeight >= pageHeight) {
+                //                 getAttractionsDataHandler(keyword)
+                //             }
+                //         }
+                //     }
+                // }
                 function scrollToBottomGetDataHandler(minusHeight = 60) {
-                    window.onscroll = () => {
-                        if (scrollFlag) {
-                            let pageHeight =
-                                document.body.getBoundingClientRect().height -
-                                minusHeight //總高度
-                            let clientHeight =
-                                document.documentElement.clientHeight // 可視區
-                            let scrollTop = document.documentElement.scrollTop //捲去高度
-                            if (scrollTop + clientHeight >= pageHeight) {
-                                getAttractionsDataHandler(keyword)
-                            }
-                        }
+                    // 觸發條件
+                    // rooMargin 正數增加範圍 負數縮小範圍
+                    // threshold 0 碰到元素上面與下面觸發 1碰到元素下面觸發 包含(rootMargin)
+                    const options = {
+                        rootMargin: `${minusHeight}px 0px 0px 0px`,
+                        threshold: 0,
                     }
+                    // 觸發後要做的事情
+                    const callback = (entries, observer) => {
+                        entries.forEach((entry) => {
+                            if(entry.isIntersecting){
+                                // console.log(entry) 打開查看一下能拿到的object
+                                getAttractionsDataHandler()
+                            }
+                        })
+                    }
+                    // NEW出IntersectionObserver實體
+                    let observer = new IntersectionObserver(callback, options)
+                    // 要監聽的元素
+                    const footer = document.querySelector('footer')
+                    // 監聽
+                    observer.observe(footer)
                 }
             })()
         </script>
