@@ -1,13 +1,8 @@
-from model._init_ import *
+from model import *
 from flask import *
 from flask_cors import CORS
 import math
 controllerApp = Blueprint('controllerApp', __name__)
-# CORS(controllerApp)
-
-# API
-
-
 @controllerApp.route("/api/attractions")
 def getAttractionsHandler():
     keyword = request.args.get('keyword')
@@ -30,8 +25,6 @@ def getAttractionsHandler():
         rowData = rowData.getData()
         result['data'].insert(i, rowData)
     return result
-
-
 @controllerApp.route("/api/attraction/<attractionId>")
 def attractionHandler(attractionId):
     data = get_attraction(attractionId)

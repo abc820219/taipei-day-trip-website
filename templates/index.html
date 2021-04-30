@@ -152,7 +152,7 @@
                     scrollFlag = false
                     $ajax
                         .get(
-                            `http://18.179.99.242:3000/api/attractions?page=${page}&keyword=${keyword}`
+                            `/api/attractions?page=${page}&keyword=${keyword}`
                         )
                         .then((res) => {
                             page = res.data.page
