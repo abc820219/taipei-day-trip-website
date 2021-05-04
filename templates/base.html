@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ title }}</title>
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="../static/css/reset.css" />
+        <link rel="stylesheet" href="../static/css/utility.css" />
+        <link rel="stylesheet" href="../static/css/variable.css" />
+        <link rel="stylesheet" href="../static/css/base.css" />
+        <link rel="stylesheet" href="../static/css/header.css" />
+        <link rel="stylesheet" href="../static/css/banner.css" />
+        <link rel="stylesheet" href="../static/css/footer.css" />
+        <link rel="stylesheet" href="../static/css/alert.css" />
+        <link rel="stylesheet" href="../static/css/grid-system.css" />
+        <script src="../static/js/ilibrary.js"></script>
+    </head>
+    <body>
+        <div class="alert">
+            <form class="alert-form">
+                <h3>
+                    登入會員帳號
+                    <img
+                        src="../static/images/icon/icon_close.png"
+                        alt=""
+                        id="alertClose"
+                    />
+                </h3>
+                <input type="text" placeholder="輸入電子信箱" />
+                <input type="text" placeholder="輸入密碼" />
+                <button class="btn-primary">登入帳戶</button>
+                <a href="javascript:;">還沒有帳戶？點此註冊</a>
+            </form>
+        </div>
+        <main class="home">
+            <header class="header">
+                <div
+                    class="container d-flex justify-content-between align-items-center"
+                >
+                    <h1>台北一日遊</h1>
+                    <ul class="d-flex align-items-center">
+                        <li>
+                            <a href="javascript:;">預定行程</a>
+                        </li>
+                        <li id="loginTxt">
+                            <a href="javascript:;">登入/註冊</a>
+                        </li>
+                    </ul>
+                </div>
+            </header>
+            {% block content %} {% endblock %}
+        </main>
+        <footer class="footer">COPYRIGHT © 2021 台北一日遊</footer>
+    </body>
+    <script>
+        // 事件綁定
+        $('#loginTxt').on('click', () => {
+            $('.alert').add('alert--active')
+        })
+        $('#alertClose').on('click', () => {
+            $('.alert').remove('alert--active')
+        })
+    </script>
+</html>

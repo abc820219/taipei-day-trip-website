@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="../static/css/reset.css" />
+        <link rel="stylesheet" href="../static/css/utility.css" />
+        <link rel="stylesheet" href="../static/css/variable.css" />
+        <link rel="stylesheet" href="../static/css/base.css" />
+        <link rel="stylesheet" href="../static/css/header.css" />
+        <link rel="stylesheet" href="../static/css/banner.css" />
+        <link rel="stylesheet" href="../static/css/footer.css" />
+        <link rel="stylesheet" href="../static/css/alert.css" />
+        <link rel="stylesheet" href="../static/css/home.css" />
+    </head>
+
+    <body>
+        <div class="alert">
+            <form class="alert-form">
+                <h3>
+                    登入會員帳號
+                    <img
+                        src="../static/images/icon/icon_close.png"
+                        alt=""
+                        id="alertClose"
+                    />
+                </h3>
+                <input type="text" placeholder="輸入電子信箱" />
+                <input type="text" placeholder="輸入密碼" />
+                <button class="btn-primary">登入帳戶</button>
+                <a href="javascript:;">還沒有帳戶？點此註冊</a>
+            </form>
+        </div>
+        <main class="home">
+            <header class="header">
+                <div
+                    class="container d-flex justify-content-between align-items-center"
+                >
+                    <h1>台北一日遊</h1>
+                    <ul class="d-flex align-items-center">
+                        <li>
+                            <a href="javascript:;">預定行程</a>
+                        </li>
+                        <li id="loginTxt">
+                            <a href="javascript:;">登入/註冊</a>
+                        </li>
+                    </ul>
+                </div>
+            </header>
+            <section class="banner">
+                <div class="container">
+                    <h3>輕鬆享受台北一日悠閒</h3>
+                    <p>探索每個角落，體驗城市的深度旅遊行程</p>
+                    <label class="banner-search d-flex" for="">
+                        <input
+                            type="text"
+                            placeholder="輸入景點名稱查詢"
+                            id="searchAttInput"
+                        />
+                        <button
+                            class="banner-search-iconBox flex-center"
+                            id="searchBtn"
+                        >
+                            <img
+                                src="../static/images/icon/icon_search.png"
+                                alt=""
+                            />
+                        </button>
+                    </label>
+                </div>
+            </section>
+            <section class="attractions container">
+                <ul class="attractions-list d-flex">
+                    <!-- <li class="attractions-list-card">
+                        <img src="../static/images/Picture.png" alt="" />
+                        <p>平安鐘</p>
+                        <div class="d-flex justify-content-between">
+                            <span>忠孝復興</span>
+                            <span>公共藝術</span>
+                        </div>
+                    </li> -->
+                </ul>
+            </section>
+        </main>
+        <footer class="footer">COPYRIGHT © 2021 台北一日遊</footer>
+        <script src="../static/js/ilibrary.js"></script>
+        <script>
+            // template
+            function attractionsCardTemp(
+                name = '無資訊',
+                mrt = '無資訊',
+                category = '無資訊',
+                imgUrl = '無資訊'
+            ) {
+                return `    
+                    <li class="attractions-list-card">
+                        <img src="${imgUrl}" alt="找不到圖片" onerror="this.src='https://www.smartm.com.tw/data/Images/7f/ee/58/d0/8bb3085e880ac04dbe23c27.jpg?v=1590940810.jpg'" />
+                        <p>${name}</p>
+                        <div class="d-flex justify-content-between">
+                            <span>${(mrt === 'None') | !mrt ? '無' : mrt}</span>
+                            <span>${category.replace(/\s*/g, '')}</span>
+                        </div>
+                    </li>
+                    `
+            }
+            // template
+            // 全域variable
+            let page = 0
+            let scrollFlag = true
+            let keyword = ''
+            // 全域variable
+            ;(() => {
+                // 事件綁定
+                $('#loginTxt').on('click', () => {
+                    $('.alert').add('alert--active')
+                })
+                $('#alertClose').on('click', () => {
+                    $('.alert').remove('alert--active')
+                })
+                $('#searchBtn').on('click', () => {
+                    page = 0
+                    keyword = $('#searchAttInput').val()
+                    getAttractionsDataHandler(keyword, true)
+                })
+                // 畫面初始化前
+                window.onbeforeunload = function () {
+                    $log("init before")
+                    window.scrollTo(0, 0)
+                }
+                // dom初始化後
+                document.addEventListener('DOMContentLoaded', function () {
+                    $log('dom Ok')
+                })
+                // 網頁的全部內容，包括圖片，CSS及<iframe> 初始化後
+                window.onload = function () {
+                    $log('all Ok')
+                    scrollToBottomGetDataHandler()
+                    getAttractionsDataHandler()
+                }
+
+                // methods
+                function getAttractionsDataHandler(
+                    keyword = '',
+                    reset = false
+                ) {
+                    if (page === null) return
+                    reset
+                        ? $('.attractions-list').html(
+                              '<li  class="attractions-list--resetLoading" id="loading">loading...</li>'
+                          )
+                        : $('#loading')
+                        ? ''
+                        : $('.attractions-list').append(
+                              '<li class="attractions-list--loading" id="loading">loading...</li>'
+                          )
+                    scrollFlag = false
+                    $ajax
+                        .get(`/api/attractions?page=${page}&keyword=${keyword}`)
+                        .then((res) => {
+                            page = res.data.page
+                            if (!res.data.data.length || !res.data.data) {
+                                $log(res)
+                                $('.attractions-list').html(
+                                    '<li class="attractions-list--empty">找不到資料...</li>'
+                                )
+                                return
+                            }
+                            $('#loading').removeChild()
+                            res.data.data.forEach((item) => {
+                                let { name, mrt, category, images } = item
+                                if (!reset || !keyword) {
+                                    $('.attractions-list').append(
+                                        attractionsCardTemp(
+                                            name,
+                                            mrt,
+                                            category,
+                                            JSON.parse(images)[0]
+                                        )
+                                    )
+                                }
+                                if (reset) {
+                                    let str = ''
+                                    str = res.data.data.reduce((pre, cur) => {
+                                        return (
+                                            pre +
+                                            attractionsCardTemp(
+                                                cur.name,
+                                                cur.mrt,
+                                                cur.category,
+                                                JSON.parse(cur.images)[0]
+                                            )
+                                        )
+                                    }, '')
+                                    $('.attractions-list').html(str)
+                                }
+                            })
+                            scrollFlag = true
+                        })
+                        .catch((err) => {
+                            $log(err)
+                            scrollFlag = true
+                        })
+                }
+                // function scrollToBottomGetDataHandler(minusHeight = 60) {
+                //     window.onscroll = () => {
+                //         if (scrollFlag) {
+                //             let pageHeight =
+                //                 document.body.getBoundingClientRect().height -
+                //                 minusHeight //總高度
+                //             let clientHeight =
+                //                 document.documentElement.clientHeight // 可視區
+                //             let scrollTop = document.documentElement.scrollTop //捲去高度
+                //             if (scrollTop + clientHeight >= pageHeight) {
+                //                 getAttractionsDataHandler(keyword)
+                //             }
+                //         }
+                //     }
+                // }
+                function scrollToBottomGetDataHandler(minusHeight = 100) {
+                    // 觸發條件
+                    // rooMargin 正數增加範圍 負數縮小範圍
+                    // threshold 0 碰到元素上面與下面觸發 1碰到元素下面觸發 包含(rootMargin)
+                    const options = {
+                        rootMargin: `${minusHeight}px 0px 0px 0px`,
+                        threshold: 0,
+                    }
+                    // 觸發後要做的事情
+                    const callback = (entries, observer) => {
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                $log(entry) //查看一下能拿到的object
+                                getAttractionsDataHandler()
+                            }
+                        })
+                    }
+                    // NEW出IntersectionObserver實體
+                    let observer = new IntersectionObserver(callback, options)
+                    // 要監聽的元素
+                    const footer = document.querySelector('footer')
+                    // 監聽
+                    observer.observe(footer)
+                }
+            })()
+        </script>
+    </body>
+</html>

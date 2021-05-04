@@ -1,0 +1,43 @@
+.attractionDetail > div {
+    padding: 37px 15px;
+}
+.attractionDetail-book > h2 {
+    margin-bottom: 15px;
+    font-size: 24px;
+    font-weight: bold;
+}
+.attractionDetail-book > p {
+    margin-bottom: 20px;
+}
+.attractionDetail-book-form {
+    background: #e8e8e8;
+    border-radius: 5px;
+    padding: 15px 20px 41px;
+}
+.attractionDetail-book-form h3,
+.attractionDetail-book-form label,
+.attractionDetail-book-form p {
+    margin-bottom: 15px;
+    display: block;
+}
+.attractionDetail-book-form button {
+    padding: 10px 20px;
+    font-size: 19px;
+}
+.attractionDetail-book-form .title {
+    font-weight: bold;
+}
+
+.attractionDetail-book-form p:last-of-type {
+    margin-bottom: 25px;
+}
+
+.attractionDetail > div:nth-child(2) {
+    padding-top: 50px;
+    padding-bottom: 100px;
+}
+
+.attractionDetail-content p {
+    margin-bottom: 20px;
+    line-height: 23px;
+}

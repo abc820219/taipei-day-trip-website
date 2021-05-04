@@ -73,6 +73,7 @@
                 return
             }
             this.doms.forEach((dom) => {
+                console.log(dom)
                 this.doms[0].parentNode.removeChild(dom)
             })
         }
