@@ -231,7 +231,7 @@
                 let x = e.pageX - startX
                 $('#carousel-imgs').style(`transform:translateX(${x}px)`)
             }
-            let mouseHand = function (e) {
+            let mouseup = function (e) {
                 e.stopPropagation()
                 if (e.pageX - startX > 0) {
                     controller.imgHandler('pre')
@@ -241,12 +241,26 @@
                 }
                 $('#carousel-imgs').style('transition:1s')
                 $('#carousel-imgs').style(`transform:translateX(${0}px)`)
-                document.removeEventListener('mouseup', mouseHand)
+                document.removeEventListener('mouseup', mouseup)
                 document.removeEventListener('mousemove', mousemove)
             }
             document.addEventListener('mousemove', mousemove)
-            document.addEventListener('mouseup', mouseHand)
-            $('#carousel-imgs').on('mouseout', mouseHand)
+            document.addEventListener('mouseup', mouseup)
+            $('#carousel-imgs').on('mouseout', (e) => {
+                e.stopPropagation()
+                e.preventDefault()
+                let startX = e.pageX
+                if (e.pageX - startX > 100) {
+                    that.imgHandler('pre')
+                }
+                if (e.pageX - startX < -100) {
+                    that.imgHandler('next')
+                }
+                $('#carousel-imgs').style('transition:1s')
+                $('#carousel-imgs').style(`transform:translateX(${0}px)`)
+                document.removeEventListener('mouseup', mouseup)
+                document.removeEventListener('mousemove', mousemove)
+            })
         },
     }
 
