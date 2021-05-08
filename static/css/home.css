@@ -29,16 +29,16 @@
     margin-top: 30px;
 }
 
-.attractions-list-card > p {
+.attractions-list-card > a > p {
     padding: 18px 10px;
     font-weight: bold;
 }
 
-.attractions-list-card > div {
+.attractions-list-card > a > div {
     padding: 0 10px 12px 10px;
 }
 
-.attractions-list-card > img {
+.attractions-list-card > a > img {
     display: block;
     width: 100%;
     height: 160px;

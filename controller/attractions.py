@@ -28,5 +28,6 @@ def getAttractionsHandler():
 @controllerApp.route("/api/attraction/<attractionId>")
 def attractionHandler(attractionId):
     data = get_attraction(attractionId)
-    rowData = AttractionsRow(data[i][0], data[i][1], data[i][2], data[i][3], data[i][4], data[i][5], data[i][6], data[i][7], data[i][8], data[i][9], data[i][10])
+    rowData = AttractionsRow(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10])
+    result = rowData.getData()
     return json.dumps(result)
