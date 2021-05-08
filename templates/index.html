@@ -169,19 +169,17 @@
         },
         initHandler() {
             let that = this
-            $('#searchBtn').on('click', () => {
-                model.page = 0
-                model.keyword = $('#searchAttInput').val()
-                views.renderData(model.keyword, true)
-            })
             // 畫面初始化前
             window.onbeforeunload = function () {
-                $log('init before')
                 window.scrollTo(0, 0)
             }
             // dom初始化後
             document.addEventListener('DOMContentLoaded', function () {
-                $log('dom Ok')
+                $('#searchBtn').on('click', () => {
+                    model.page = 0
+                    model.keyword = $('#searchAttInput').val()
+                    views.renderData(model.keyword, true)
+                })
             })
             // 網頁的全部內容，包括圖片，CSS及<iframe> 初始化後
             window.onload = function () {

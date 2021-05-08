@@ -31,3 +31,6 @@
 .d-inline-block{
     display: inline-block !important;
 }
+.cursor{
+    cursor: pointer;
+}

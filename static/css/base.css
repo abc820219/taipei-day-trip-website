@@ -1,5 +1,6 @@
 * {
     box-sizing: border-box;
+    letter-spacing:1px;
 }
 body {
     font-family: 'Noto Sans TC', sans-serif;

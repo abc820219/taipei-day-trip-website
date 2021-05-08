@@ -48,10 +48,16 @@
     Iquery.prototype.Init = class Init {
         constructor(selector) {
             this.doms = document.querySelectorAll(selector)
+            this.length = this.doms.length
             this.doms.forEach((element, i) => {
                 this[i] = element
             })
             this.parse = new DOMParser()
+        }
+        each(fn) {
+            this.doms.forEach((dom,i) => {
+                fn(dom,i)
+            })
         }
         // html區域
         // innerHTML
@@ -106,13 +112,14 @@
         // 事件區域
         // addEventListener
         on(event, func) {
+            console.log(this.doms)
             if (!this.doms.length) return
             if (this.doms.length === 1) {
                 this.doms[0].addEventListener(event, func)
                 return
             }
             this.doms.forEach((dom) => {
-                dom.classList.addEventListener(event, func)
+                dom.addEventListener(event, func)
             })
         }
         // input
@@ -123,7 +130,23 @@
                 return this.doms[0].value
             }
         }
+        width() {
+            if (!this.doms.length) return
+            if (this.doms.length === 1) {
+                return this.doms[0].offsetWidth
+            }
+        }
         // css樣式區域
+        style(str) {
+            if (!this.doms.length) return
+            if (this.doms.length === 1) {
+                this.doms[0].style[str.split(':')[0]] = str.split(':')[1]
+                return
+            }
+            this.doms.forEach((dom) => {
+                dom.style[str.split(':')[0]] = str.split(':')[1]
+            })
+        }
         // classList.add
         add(str) {
             if (!this.doms.length) return

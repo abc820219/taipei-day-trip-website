@@ -16,7 +16,7 @@
     color: var(--text-secondary);
 }
 
-.header > div > h1 {
+.header > div > h1 > a{
     font-size: 30px;
     font-weight: bold;
     color: var(--primary);

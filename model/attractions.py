@@ -32,7 +32,7 @@ def get_attractions_list(startPage, perpage, keyword):
     return mycursor.fetchall()
 
 
-def get_attraction(id):
+def get_attraction(attractionId):
     sql = f"select * from attractions where id like '{attractionId}'"
     mycursor.execute(sql)
     return mycursor.fetchone()

@@ -2,12 +2,25 @@
 <link rel="stylesheet" href="../static/css/attraction.css" />
 <section class="attractionDetail container">
     <div class="row">
-        <div class="col-6">
-            <div class="carousel">
-                <img src="" alt="" />
+        <div class="col-6 col-768-12">
+            <div class="carousel" draggable="false">
+                <img
+                    src="../static/images/icon/btn_leftArrow.png"
+                    alt=""
+                    class="carousel-arrow carousel-arrow-left"
+                    id="carousel-leftArrow"
+                />
+                <img
+                    src="../static/images/icon/btn_rightArrow.png"
+                    alt=""
+                    class="carousel-arrow carousel-arrow-right"
+                    id="carousel-rightArrow"
+                />
+                <p class="carousel-dots d-flex" id="carousel-dots"></p>
+                <div class="carousel-imgs" id="carousel-imgs"></div>
             </div>
         </div>
-        <div class="attractionDetail-book col-6">
+        <div class="attractionDetail-book col-6 col-768-12">
             <h2>平安鐘</h2>
             <p>公共藝術 at 忠孝復興</p>
             <div class="attractionDetail-book-form">
@@ -15,20 +28,31 @@
                 <p>以此景點為中心的一日行程，帶您探索城市角落故事</p>
                 <label for="">
                     <span class="title">選擇日期：</span>
-                    <input type="date" />
+                    <input
+                        type="date"
+                        class="cursor"
+                        style="height: 35px; padding-right: 5px"
+                    />
                 </label>
                 <label for="">
                     <span class="title">選擇時間：</span>
                     <label class="d-inline-block">
-                        <input type="radio" name="time" />上半天</label
-                    >
+                        <input
+                            type="radio"
+                            name="time"
+                            value="2000"
+                            checked="true"
+                        />
+                        <span class="cursor"> 上半天 </span>
+                    </label>
                     <label class="d-inline-block">
-                        <input type="radio" name="time" />下半天</label
-                    >
+                        <input type="radio" name="time" value="2500" />
+                        <span class="cursor"> 下半天 </span>
+                    </label>
                 </label>
                 <p>
                     <span class="title">導覽費用：</span>
-                    <span>新台幣 2000 元</span>
+                    <span id="cost">新台幣 2000 元</span>
                 </p>
                 <button class="btn-primary">開始預訂行程</button>
             </div>
@@ -38,19 +62,196 @@
     <div class="row">
         <div class="col-12">
             <div class="attractionDetail-content">
-                <p>
-                    平安鐘祈求大家的平安，這是為了紀念921地震週年的設計，在喧鬧的廣場上每個小時鳴鐘，保佑平安，祈禱臺灣不會再發生這樣的天災。雙手合十加上108個黃色的琉璃乳丁，隨著緩緩流下的水，在底下的一個小噴泉噴出。雙手合十的意義，一個是祈福，一個是包容，教我們要包容這樣的改變，撫平這樣的傷口。下面的水緩緩流出，代表著人的生命力是不斷地延續下去。緩緩地鐘聲，卻帶來心中的寧靜。
-                    這個平安鐘是由建築師姚仁喜與琉璃創作家王俠軍共同設計，長6公尺、寬5公尺，以鑄銅製成，由法鼓山文教基金會全額出資。平安鐘點綴都市景觀，不時提醒大家，面對刻骨銘心的災難痛苦，更應該有謙卑的一顆心。
-                </p>
+                <p id="description">loading...</p>
                 <h3>景點地址：</h3>
-                <p>臺北市 大安區忠孝東路4段</p>
+                <p id="address">loading...</p>
                 <h3>交通方式：</h3>
-                <p>
-                    捷運站名：忠孝復興站4號出口1.公車：204、212、212直、232、232副、262、262(區間)、278、299、521、605、605(副)、605(新台五線)、667、903、忠孝新幹線至頂好市場站
-                    2.車位：太平洋崇光百貨地下停車場或市民大道附近地下停車場
-                </p>
+                <p id="transport">loading...</p>
             </div>
         </div>
     </div>
 </section>
+<script>
+    let model = {
+        description: '',
+        address: '',
+        transport: '',
+        images: '',
+        carouselFlag: false,
+        dotIndex: 0,
+        timerId: null,
+        getAttractionDataHandler() {
+            let urlArr = document.location.pathname.split('/')
+            let id = urlArr[urlArr.length - 1]
+            return new Promise((resolve, reject) => {
+                $ajax
+                    .get(`/api/attraction/${id}`)
+                    .then((res) => {
+                        resolve(res)
+                    })
+                    .catch((err) => {
+                        reject(wee)
+                    })
+            })
+        },
+    }
+    let views = {
+        renderData() {
+            $('#carousel-imgs').style('left:-100%')
+            let promiseData = model.getAttractionDataHandler()
+            promiseData
+                .then((res) => {
+                    model.description = res.data.description
+                    model.address = res.data.address
+                    model.transport = res.data.transport
+                    model.images = JSON.parse(res.data.images)
+                    $('#description').html(model.description)
+                    $('#address').html(model.address)
+                    $('#transport').html(model.transport)
+                    let imgStr = ''
+                    let dotsStr = ''
+                    $log(model.images)
+                    model.images.forEach((src, i) => {
+                        imgStr = `${imgStr} <img src="${src}" alt="" draggable="false"/>`
+                        if (i === 0) {
+                            dotsStr += `<span class="carousel-dot--active"></span>`
+                        } else {
+                            dotsStr += `<span></span>`
+                        }
+                    })
+                    imgStr = `
+                        <img src="${
+                            model.images[model.images.length - 1]
+                        }" alt="" />
+                        ${imgStr}
+                        <img src="${model.images[0]}" alt="" />
+                        `
+                    $('#carousel-imgs').html(imgStr)
+                    $('#carousel-dots').html(dotsStr)
+                })
+                .catch((err) => {
+                    $log(err)
+                    $('#description').html('查無資料')
+                    $('#address').html('查無資料')
+                    $('#transport').html('查無資料')
+                })
+        },
+        renderChangeTime() {
+            $('[name=time]').each(function (dom) {
+                dom.checked === true && $('#cost').html(`新台幣${dom.value}元`)
+            })
+        },
+    }
+
+    let controller = {
+        initHandler() {
+            let that = this
+
+            // 畫面初始化前
+            window.onbeforeunload = function () {}
+            // dom初始化後
+            document.addEventListener('DOMContentLoaded', function () {
+                $log('dom Ok')
+                $('[name=time]').on('click', views.renderChangeTime)
+                $('#carousel-leftArrow').on('click', () =>
+                    that.imgHandler('pre')
+                )
+                $('#carousel-rightArrow').on('click', () =>
+                    that.imgHandler('next')
+                )
+                $('#carousel-imgs').on('mousedown', that.mouseDownHandler)
+                $('#carousel-imgs').on(
+                    'webkitTransitionEnd',
+                    that.animatedHandler
+                )
+            })
+            // 網頁的全部內容，包括圖片，CSS及<iframe> 初始化後
+            window.onload = function () {
+                $log('all Ok')
+                views.renderData()
+                model.timerId = setInterval(() => {
+                    that.imgHandler('next')
+                }, 3000)
+            }
+        },
+        imgHandler(str) {
+            if (model.carouselFlag) return
+            clearInterval(model.timerId)
+            model.carouselFlag = true
+            let left = $('#carousel-imgs')[0].style.left.split('%')[0]
+            let length = $('#carousel-imgs img').length
+            if (str === 'next') {
+                left = (Number(left) - 100) % (100 * length)
+            } else {
+                left =
+                    Number(left) + 100 > 0
+                        ? -(100 * (length - 1))
+                        : Number(left) + 100
+            }
+            $('#carousel-imgs').style(`left:${left}%`)
+        },
+        animatedHandler() {
+            clearInterval(model.timerId)
+            model.carouselFlag = false
+            let left = $('#carousel-imgs')[0].style.left.split('%')[0]
+            let length = $('#carousel-imgs img').length
+            model.dotIndex = Math.abs((Number(left) + 100) / 100)
+            if (Number(left) % (100 * (length - 1)) == 0) {
+                $('#carousel-imgs').style('transition:none')
+                $('#carousel-imgs').style(`left:-100%`)
+                model.dotIndex = 0
+            }
+            if (Number(left) + 100 > 0) {
+                $('#carousel-imgs').style('transition:none')
+                $('#carousel-imgs').style(`left:-${100 * (length - 2)}%`)
+                model.dotIndex = length - 3
+            }
+            $('#carousel-dots span').each(function (dom, i) {
+                dom.className = ''
+                if (i === model.dotIndex) {
+                    dom.className = 'carousel-dot--active'
+                }
+            })
+            setTimeout(() => {
+                $('#carousel-imgs').style('transition:all 1s')
+            })
+            model.timerId = setInterval(() => {
+                controller.imgHandler('next')
+            }, 2000)
+        },
+        mouseDownHandler(e) {
+            if (model.carouselFlag) return
+            clearInterval(model.timerId)
+            e.stopPropagation()
+            e.preventDefault()
+            let startX = e.pageX
+            $('#carousel-imgs').style('transition:0s')
+            let mousemove = function (e) {
+                e.stopPropagation()
+                let x = e.pageX - startX
+                $('#carousel-imgs').style(`transform:translateX(${x}px)`)
+            }
+            let mouseHand = function (e) {
+                e.stopPropagation()
+                if (e.pageX - startX > 0) {
+                    controller.imgHandler('pre')
+                }
+                if (e.pageX - startX < 0) {
+                    controller.imgHandler('next')
+                }
+                $('#carousel-imgs').style('transition:1s')
+                $('#carousel-imgs').style(`transform:translateX(${0}px)`)
+                document.removeEventListener('mouseup', mouseHand)
+                document.removeEventListener('mousemove', mousemove)
+            }
+            document.addEventListener('mousemove', mousemove)
+            document.addEventListener('mouseup', mouseHand)
+            $('#carousel-imgs').on('mouseout', mouseHand)
+        },
+    }
+
+    ;(() => {
+        controller.initHandler()
+    })()
+</script>
 {% endblock %}
