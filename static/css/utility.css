@@ -28,9 +28,18 @@
     color: var(--white-primary);
 }
 
-.d-inline-block{
+.d-inline-block {
     display: inline-block !important;
 }
-.cursor{
+.cursor {
     cursor: pointer;
 }
+
+.danger {
+    color: var(--danger)
+}
+
+.success {
+    color: var(--success)
+}
+

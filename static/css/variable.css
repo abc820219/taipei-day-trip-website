@@ -5,4 +5,6 @@
     --text-secondary: #757575;
     --white-primary: #fff;
     --white-secondary: #f8f8f8;
+    --danger:rgb(146, 27, 27);
+    --success:rgb(40, 189, 3);
 }

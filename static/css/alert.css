@@ -7,11 +7,10 @@
     background-color: rgba(0, 0, 0, 0.25);
     z-index: -10;
     opacity: 0;
-   
 }
 
 .alert--active {
-    transition: opacity .3s;
+    transition: opacity 0.3s;
     opacity: 1;
     z-index: 10;
 }
@@ -38,6 +37,10 @@
     margin-bottom: 15px;
     font-size: 24px;
     color: var(--text-primary);
+}
+
+.alert-form a:hover {
+    color: var(--primary);
 }
 
 .alert-form h3 img {

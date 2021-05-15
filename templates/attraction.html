@@ -34,19 +34,35 @@
                         style="height: 35px; padding-right: 5px"
                     />
                 </label>
-                <label for="">
+                <label for="" class="time-radio-wrap">
                     <span class="title">選擇時間：</span>
-                    <label class="d-inline-block">
+                    <label
+                        class="d-flex align-items-center"
+                        style="margin: 0 16px"
+                    >
                         <input
                             type="radio"
                             name="time"
                             value="2000"
                             checked="true"
+                            class="time-radio"
+                            id="morning"
                         />
+                        <label for="morning" class="time-radio-replace"></label>
                         <span class="cursor"> 上半天 </span>
                     </label>
-                    <label class="d-inline-block">
-                        <input type="radio" name="time" value="2500" />
+                    <label class="d-flex align-items-center time-radio-wrap">
+                        <input
+                            type="radio"
+                            name="time"
+                            value="2500"
+                            class="time-radio"
+                            id="afternoon"
+                        />
+                        <label
+                            for="afternoon"
+                            class="time-radio-replace"
+                        ></label>
                         <span class="cursor"> 下半天 </span>
                     </label>
                 </label>
@@ -238,6 +254,10 @@
                 }
                 if (e.pageX - startX < 0) {
                     controller.imgHandler('next')
+                } else {
+                    model.timerId = setInterval(() => {
+                        controller.imgHandler('next')
+                    }, 2000)
                 }
                 $('#carousel-imgs').style('transition:1s')
                 $('#carousel-imgs').style(`transform:translateX(${0}px)`)
@@ -252,10 +272,10 @@
                 let startX = e.pageX
                 if (e.pageX - startX > 100) {
                     that.imgHandler('pre')
-                }
-                if (e.pageX - startX < -100) {
+                } else if (e.pageX - startX < -100) {
                     that.imgHandler('next')
                 }
+
                 $('#carousel-imgs').style('transition:1s')
                 $('#carousel-imgs').style(`transform:translateX(${0}px)`)
                 document.removeEventListener('mouseup', mouseup)
