@@ -23,7 +23,15 @@ def registerLoginHandler():
     name = data['name']
     email = data['email']
     password = data['password']
-    if register_user(name, email, password) == True:
+    if not name or not email or not password:
+        return registerLoginLogoutInfo(False, "請輸入正確資料").getMessage()
+    registerFlag = register_user(name, email, password)
+    
+    if registerFlag == "信箱重複":
+        return registerLoginLogoutInfo(False, "信箱重複").getMessage()
+
+    print(register_user(name, email, password))
+    if registerFlag == True:
         return registerLoginLogoutInfo(True, "註冊成功").getMessage()
     else:
         return registerLoginLogoutInfo(False, "註冊失敗").getMessage()

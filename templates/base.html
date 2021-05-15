@@ -136,10 +136,23 @@
                         })
                         $('.alert-form button').on('click', (e) => {
                             e.preventDefault()
+                            let isNullValue = false
                             $('.alert-form input').each(function (dom) {
                                 model.postData[dom.name] = dom.value
+                                if (!dom.value) {
+                                    dom.style.border =
+                                        '1px solid rgb(146, 27, 27)'
+                                    isNullValue = true
+                                } else {
+                                    dom.style.border = '1px solid #757575'
+                                }
                             })
-                            e
+                            if (isNullValue) {
+                                $('#LoginLogoutInfo').html(`
+                                    <small class="danger" style="margin-bottom:10px;display:inline-block">請輸入正確資訊</small>
+                                    `)
+                                return
+                            }
                             fetch(model.postUrl, {
                                 method: model.postMethod,
                                 body: JSON.stringify(model.postData), // must match 'Content-Type'
@@ -149,20 +162,36 @@
                             })
                                 .then((res) => res.json())
                                 .then((res) => {
+                                    let isErr = res.error
                                     if (res.error) {
                                         $('#LoginLogoutInfo').html(`
                                     <small class="danger" style="margin-bottom:10px;display:inline-block">${res.message}</small>
                                     `)
+                                        if (res.message === '信箱重複') {
+                                            $('input[name="email"]').style(
+                                                'border:1px solid rgb(146, 27, 27)'
+                                            )
+                                        }
                                         return
                                     }
                                     $('#LoginLogoutInfo').html(`
                                     <small class="success"  style="margin-bottom:10px;display:inline-block">${
-                                        model.postMethod === "POST" ? '登入成功' : '註冊成功'
+                                        model.postMethod === 'POST'
+                                            ? '登入成功'
+                                            : '註冊成功'
                                     }</small>
                                     `)
-                                    window.location.reload()
+                                    if (model.postMethod === 'POST') {
+                                        window.location.reload()
+                                    }
+                                    $('.alert-form input').each(function (dom) {
+                                        dom.value = ''
+                                        model.postData[dom.name] = dom.value
+                                        dom.style.border = '1px solid  #757575'
+                                    })
                                 })
                                 .catch((err) => {
+                                    console.log(err)
                                     window.location.reload()
                                 })
                         })
@@ -194,6 +223,31 @@
 
             let view = {
                 headerRender() {},
+                formContentRender(isErr) {
+                    console.log(isErr)
+                    if (isErr) {
+                        $('#LoginLogoutInfo').html(`
+                                    <small class="danger" style="margin-bottom:10px;display:inline-block">${res.message}</small>
+                                    `)
+                        return
+                    }
+                    console.log(isErr)
+                    $('#LoginLogoutInfo').html(`
+                                    <small class="success"  style="margin-bottom:10px;display:inline-block">${
+                                        model.postMethod === 'POST'
+                                            ? '登入成功'
+                                            : '註冊成功'
+                                    }</small>
+                                    `)
+                    if (model.postMethod === 'POST') {
+                        window.location.reload()
+                    }
+                    $('.alert-form input').each(function (dom) {
+                        dom.value = ''
+                        model.postData[dom.name] = dom.value
+                        dom.style.border = '1px solid  #757575'
+                    })
+                },
                 formRender(e) {
                     if (e.target.id === 'changeForm') {
                         if (this.id === 'login') {

@@ -20,7 +20,6 @@ def get_user(email):
 
 def check_account(email, password):
     sql = f"SELECT count('id') FROM users WHERE email like '{email}' AND password like '{password}'"
-    print(sql)
     mycursor.execute(sql)
     for user in mycursor:
         if user[0] != 0:
@@ -44,10 +43,7 @@ def register_user(name, email, password):
         return "信箱重複"
     else:
         isRegistered = insert_user(name, email, password)
-    if isRegistered:
-        return True
-    else:
-        return False
+        return isRegistered
 
 
 class registerLoginLogoutInfo:
