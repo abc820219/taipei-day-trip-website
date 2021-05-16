@@ -76,7 +76,7 @@
                 .then((res) => {
                     model.page = res.data.page
                     if (!res.data.data.length || !res.data.data) {
-                        $log(res)
+                        // $log(res)
                         $('.attractions-list').html(
                             '<li class="attractions-list--empty">找不到資料...</li>'
                         )
@@ -85,8 +85,18 @@
                     $('#loading').removeChild()
                     res.data.data.forEach((item) => {
                         let { name, mrt, category, images, id } = item
+
                         if (!reset || !keyword) {
                             $('.attractions-list').append(
+                                template.attractionsCardTemp(
+                                    name,
+                                    mrt,
+                                    category,
+                                    JSON.parse(images)[0],
+                                    id
+                                )
+                            )
+                            console.log(
                                 template.attractionsCardTemp(
                                     name,
                                     mrt,
@@ -105,7 +115,8 @@
                                         cur.name,
                                         cur.mrt,
                                         cur.category,
-                                        JSON.parse(cur.images)[0]
+                                        JSON.parse(cur.images)[0],
+                                        cur.id
                                     )
                                 )
                             }, '')
@@ -154,7 +165,7 @@
             const callback = (entries, observer) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        $log(entry) //查看一下能拿到的object
+                        // $log(entry) //查看一下能拿到的object
                         if (model.scrollFlag == true) return
                         views.renderData(model.keyword)
                     }
@@ -183,7 +194,7 @@
             })
             // 網頁的全部內容，包括圖片，CSS及<iframe> 初始化後
             window.onload = function () {
-                $log('all Ok')
+                // $log('all Ok')
                 views.renderData()
                 that.scrollToBottomGetDataHandler()
             }

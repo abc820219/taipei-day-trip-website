@@ -21,8 +21,8 @@
             </div>
         </div>
         <div class="attractionDetail-book col-6 col-768-12">
-            <h2>平安鐘</h2>
-            <p>公共藝術 at 忠孝復興</p>
+            <h2 id="name">平安鐘</h2>
+            <p id="subAddress">公共藝術 at 忠孝復興</p>
             <div class="attractionDetail-book-form">
                 <h3 class="title">訂購導覽行程</h3>
                 <p>以此景點為中心的一日行程，帶您探索城市角落故事</p>
@@ -89,6 +89,7 @@
 </section>
 <script>
     let model = {
+        name: '',
         description: '',
         address: '',
         transport: '',
@@ -117,10 +118,14 @@
             let promiseData = model.getAttractionDataHandler()
             promiseData
                 .then((res) => {
+                    console.log(res.data)
+                    model.name = res.data.name
                     model.description = res.data.description
                     model.address = res.data.address
                     model.transport = res.data.transport
                     model.images = JSON.parse(res.data.images)
+                    $('#name').html(model.name)
+                    $('#subAddress').html(model.address)
                     $('#description').html(model.description)
                     $('#address').html(model.address)
                     $('#transport').html(model.transport)
