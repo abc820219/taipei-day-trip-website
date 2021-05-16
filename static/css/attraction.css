@@ -101,6 +101,29 @@
     height: 378px;
     object-fit: cover;
 }
+label.time-radio-wrap{
+    display: flex;
+}
+
+.time-radio {
+    position: absolute;
+    z-index: -1;
+    appearance: none;
+    opacity: 0;
+}
+.time-radio-replace {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgb(0, 0, 0);
+    background-color: #fff;
+    border-radius: 50%;
+}
+.time-radio:checked ~ .time-radio-replace {
+    background-color: var(--primary);
+    border: 2px solid rgb(255, 255, 255);
+
+}
 
 @media (max-width: 768px) {
     .attractionDetail > div:nth-of-type(2) {

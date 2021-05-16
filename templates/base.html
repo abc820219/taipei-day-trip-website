@@ -23,7 +23,7 @@
     </head>
     <body>
         <div class="alert">
-            <form class="alert-form">
+            <form class="alert-form" id="login">
                 <h3>
                     登入會員帳號
                     <img
@@ -32,16 +32,22 @@
                         id="alertClose"
                     />
                 </h3>
-                <input type="text" placeholder="輸入電子信箱" />
-                <input type="text" placeholder="輸入密碼" />
+                <input type="text" name="email" placeholder="輸入電子信箱" />
+                <input type="text" name="password" placeholder="輸入密碼" />
                 <button class="btn-primary">登入帳戶</button>
-                <a href="javascript:;">還沒有帳戶？點此註冊</a>
+                <div id="LoginLogoutInfo"></div>
+                <a href="javascript:;" id="changeForm">還沒有帳戶？點此註冊</a>
             </form>
         </div>
         <main class="home">
             <header class="header">
                 <div
-                    class="container d-flex justify-content-between align-items-center"
+                    class="
+                        container
+                        d-flex
+                        justify-content-between
+                        align-items-center
+                    "
                 >
                     <h1>
                         <a href="/"> 台北一日遊 </a>
@@ -50,7 +56,7 @@
                         <li>
                             <a href="javascript:;">預定行程</a>
                         </li>
-                        <li id="loginTxt">
+                        <li id="loginTxt" class="cursor">
                             <a href="javascript:;">登入/註冊</a>
                         </li>
                     </ul>
@@ -61,12 +67,205 @@
         <footer class="footer">COPYRIGHT © 2021 台北一日遊</footer>
     </body>
     <script>
-        // 事件綁定
-        $('#loginTxt').on('click', () => {
-            $('.alert').add('alert--active')
-        })
-        $('#alertClose').on('click', () => {
-            $('.alert').remove('alert--active')
-        })
+        ;(() => {
+            let model = {
+                postData: {},
+                postUrl: '/api/user',
+                postMethod: 'POST',
+            }
+            let temp = {
+                registerForm: ` <h3>
+                    註冊會員帳號
+                    <img
+                        src="../static/images/icon/icon_close.png"
+                        alt=""
+                        id="alertClose"
+                    />
+                </h3>
+                <input type="text" name="name" placeholder="輸入姓名" />
+                <input type="text" name="email" placeholder="輸入電子信箱" />
+                <input type="text" name="password" placeholder="輸入密碼" />
+                <button class="btn-primary">登入帳戶</button>
+                <div id="LoginLogoutInfo"></div>
+                <a href="javascript:;" id="changeForm">已經有帳戶了？點此登入</a>`,
+                loginForm: ` <h3>
+                    登入會員帳號
+                    <img
+                        src="../static/images/icon/icon_close.png"
+                        alt=""
+                        id="alertClose"
+                    />
+                </h3>
+                <input type="text" name="email"  placeholder="輸入電子信箱" />
+                <input type="text" name="password" placeholder="輸入密碼" />
+                <button class="btn-primary">登入帳戶</button>
+                <div id="LoginLogoutInfo"></div>
+                <a href="javascript:;" id="changeForm"
+                    >還沒有帳戶？點此註冊</a
+                >
+            `,
+            }
+            // 事件綁定
+            let controller = {
+                initHandler() {
+                    document.addEventListener('DOMContentLoaded', function () {
+                        $ajax
+                            .get('/api/user')
+                            .then((res) => {
+                                if (res.data) {
+                                    $('#loginTxt').html('登出')
+                                    let isLogin = true
+                                    controller.eventBindHandler(isLogin)
+                                    return
+                                }
+                                controller.eventBindHandler()
+                            })
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                        $('.alert-form').on('click', view.formRender)
+                    })
+                },
+                eventBindHandler(isLogin = false) {
+                    if (!isLogin) {
+                        $('#loginTxt').on('click', () => {
+                            $('.alert').add('alert--active')
+                        })
+                        $('#alertClose').on('click', () => {
+                            $('.alert').remove('alert--active')
+                        })
+                        $('.alert-form button').on('click', (e) => {
+                            e.preventDefault()
+                            let isNullValue = false
+                            $('.alert-form input').each(function (dom) {
+                                model.postData[dom.name] = dom.value
+                                if (!dom.value) {
+                                    dom.style.border =
+                                        '1px solid rgb(146, 27, 27)'
+                                    isNullValue = true
+                                } else {
+                                    dom.style.border = '1px solid #757575'
+                                }
+                            })
+                            if (isNullValue) {
+                                $('#LoginLogoutInfo').html(`
+                                    <small class="danger" style="margin-bottom:10px;display:inline-block">請輸入正確資訊</small>
+                                    `)
+                                return
+                            }
+                            fetch(model.postUrl, {
+                                method: model.postMethod,
+                                body: JSON.stringify(model.postData), // must match 'Content-Type'
+                                headers: new Headers({
+                                    'Content-Type': 'application/json',
+                                }),
+                            })
+                                .then((res) => res.json())
+                                .then((res) => {
+                                    let isErr = res.error
+                                    if (res.error) {
+                                        $('#LoginLogoutInfo').html(`
+                                    <small class="danger" style="margin-bottom:10px;display:inline-block">${res.message}</small>
+                                    `)
+                                        if (res.message === '信箱重複') {
+                                            $('input[name="email"]').style(
+                                                'border:1px solid rgb(146, 27, 27)'
+                                            )
+                                        }
+                                        return
+                                    }
+                                    $('#LoginLogoutInfo').html(`
+                                    <small class="success"  style="margin-bottom:10px;display:inline-block">${
+                                        model.postMethod === 'POST'
+                                            ? '登入成功'
+                                            : '註冊成功'
+                                    }</small>
+                                    `)
+                                    if (model.postMethod === 'POST') {
+                                        window.location.reload()
+                                    }
+                                    $('.alert-form input').each(function (dom) {
+                                        dom.value = ''
+                                        model.postData[dom.name] = dom.value
+                                        dom.style.border = '1px solid  #757575'
+                                    })
+                                })
+                                .catch((err) => {
+                                    console.log(err)
+                                    window.location.reload()
+                                })
+                        })
+                        return
+                    }
+
+                    $('#loginTxt').on('click', () => {
+                        fetch(model.postUrl, {
+                            method: 'DELETE',
+                            body: JSON.stringify(model.postData), // must match 'Content-Type'
+                            headers: new Headers({
+                                'Content-Type': 'application/json',
+                            }),
+                        })
+                            .then((res) => res.json())
+                            .then((res) => {
+                                if (res) {
+                                    window.location.reload()
+                                }
+                            })
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                    })
+                },
+            }
+
+            // 註冊登入form
+
+            let view = {
+                headerRender() {},
+                formContentRender(isErr) {
+                    console.log(isErr)
+                    if (isErr) {
+                        $('#LoginLogoutInfo').html(`
+                                    <small class="danger" style="margin-bottom:10px;display:inline-block">${res.message}</small>
+                                    `)
+                        return
+                    }
+                    console.log(isErr)
+                    $('#LoginLogoutInfo').html(`
+                                    <small class="success"  style="margin-bottom:10px;display:inline-block">${
+                                        model.postMethod === 'POST'
+                                            ? '登入成功'
+                                            : '註冊成功'
+                                    }</small>
+                                    `)
+                    if (model.postMethod === 'POST') {
+                        window.location.reload()
+                    }
+                    $('.alert-form input').each(function (dom) {
+                        dom.value = ''
+                        model.postData[dom.name] = dom.value
+                        dom.style.border = '1px solid  #757575'
+                    })
+                },
+                formRender(e) {
+                    if (e.target.id === 'changeForm') {
+                        if (this.id === 'login') {
+                            this.innerHTML = temp.registerForm
+                            this.id = 'register'
+                            model.postMethod = 'PATCH'
+                            controller.eventBindHandler()
+                            return
+                        }
+                        this.innerHTML = temp.loginForm
+                        this.id = 'login'
+                        model.postMethod = 'POST'
+                        controller.eventBindHandler()
+                    }
+                },
+            }
+
+            controller.initHandler()
+        })()
     </script>
 </html>

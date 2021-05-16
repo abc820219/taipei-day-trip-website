@@ -22,6 +22,10 @@
     color: var(--primary);
 }
 
+/* .loginTxt{
+    min-height: 1px;
+    min-width:34px;
+} */
 @media (max-width: 1024px) {
     .header {
         padding: 0 10px;

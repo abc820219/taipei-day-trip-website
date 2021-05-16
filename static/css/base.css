@@ -7,6 +7,10 @@ body {
     color: var(--text-primary);
 }
 
+small{
+    font-size: 12px;
+}
+
 
 a {
     text-decoration: none;

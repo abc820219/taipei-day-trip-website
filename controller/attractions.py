@@ -1,9 +1,9 @@
 from model import *
 from flask import *
-from flask_cors import CORS
 import math
-controllerApp = Blueprint('controllerApp', __name__)
-@controllerApp.route("/api/attractions")
+attractionApp = Blueprint('attractionApp', __name__)
+
+@attractionApp.route("/api/attractions")
 def getAttractionsHandler():
     keyword = request.args.get('keyword')
     page = int(request.args.get('page'))
@@ -25,7 +25,10 @@ def getAttractionsHandler():
         rowData = rowData.getData()
         result['data'].insert(i, rowData)
     return result
-@controllerApp.route("/api/attraction/<attractionId>")
+
+
+
+@attractionApp.route("/api/attraction/<attractionId>")
 def attractionHandler(attractionId):
     data = get_attraction(attractionId)
     rowData = AttractionsRow(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10])
