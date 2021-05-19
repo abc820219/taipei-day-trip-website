@@ -34,7 +34,9 @@ def insert_user(name, email, password):
     sql = f"insert into users value(null,'{name}','{password}','{email}')"
     mycursor.execute(sql)
     mydb.commit()
-    isSucceeded = check_account(email, password)
+    print(mycursor.rowcount)
+    if mycursor.rowcount == 1:
+        isSucceeded = True
     return isSucceeded
 
 
