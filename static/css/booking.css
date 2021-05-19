@@ -1,0 +1,134 @@
+.booking {
+    padding: 46px 0 62px;
+}
+
+.booking h5 {
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.booking label {
+    display: block;
+    margin-bottom: 15px;
+}
+
+.booking-attraction-info,
+.booking-your-info,
+.booking-card-info {
+    padding-left: 100px;
+    padding-right: 100px;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.booking-attraction-info {
+    padding-bottom: 40px;
+}
+
+.booking-your-info,
+.booking-card-info {
+    padding-top: 45px;
+    padding-bottom: 45px;
+}
+
+.booking input {
+    border: 1px solid #e8e8e8;
+    width: 200px;
+    height: 38px;
+}
+
+.booking-attraction-info h5 {
+    margin-bottom: 35px;
+}
+
+.booking-attraction-info-imgBox {
+    width: 266px;
+    height: 200px;
+    margin-right: 22px;
+}
+
+.booking-attraction-info-imgBox img {
+    object-fit: cover;
+    width: 100%;
+}
+
+.booking-attraction-info ul > li:first-child {
+    color: var(--primary);
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.booking-attraction-info ul > li {
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.booking-attraction-info ul > li > span {
+    font-weight: normal;
+}
+
+.booking-your-info h5,
+.booking-card-info h5 {
+    margin-bottom: 24px;
+}
+
+.booking-your-info p {
+    line-height: 23px;
+    font-weight: bold;
+}
+
+.booking-confirm {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 43px 100px 0px;
+}
+
+.booking-confirm span {
+    margin-bottom: 25px;
+    font-weight: bold;
+}
+
+.booking-confirm button {
+    padding: 10px 20px;
+    font-size: 19px;
+}
+
+.delete {
+    width: 30px;
+    height: 30px;
+    margin-left: auto;
+    transform: translateY(-50%);
+}
+
+@media (max-width: 768px) {
+    .booking {
+        padding: 46px 25px 62px;
+    }
+    
+    .booking h5 {
+        font-size: 16px;
+    }
+
+    .booking-attraction-info > div {
+        flex-direction: column;
+    }
+    .booking-attraction-info > div > ul,
+    .booking-attraction-info > div > div {
+        width: 100%;
+    }
+    .booking-attraction-info-imgBox {
+        height: auto;
+        margin-right: 0;
+        margin-bottom: 19px;
+    }
+    .booking-attraction-info,
+    .booking-your-info,
+    .booking-card-info {
+        padding-left: 15px;
+        padding-right: 15px;
+        border-bottom: 1px solid #e8e8e8;
+    }
+    .booking-confirm {
+        padding: 43px 15px 0px;
+    }
+}

@@ -1,0 +1,165 @@
+{% extends "base.html" %} {% block content %}
+<link rel="stylesheet" href="../static/css/booking.css" />
+<section class="booking container">
+    <div class="row">
+        <div class="col-12 booking-attraction-info">
+            <h5>
+                您好，
+                <span id="userName"></span>
+                <span id="hasbooking">沒有預定行程</span>
+            </h5>
+            <div class="d-flex">
+                <div class="booking-attraction-info-imgBox">
+                    <img
+                        src="http://www.travel.taipei/d_upload_ttn/sceneadmin/pic/11002891.jpg"
+                        alt=""
+                    />
+                </div>
+                <ul>
+                    <li id="name">沒有預定行程</li>
+                    <li>日期： <span id="date">無</span></li>
+                    <li>時間： <span id="time">無</span></li>
+                    <li>
+                        費用：
+                        <span> 新台幣 </span>
+                        <span id="price">0</span>
+                        <span> 元 </span>
+                    </li>
+                    <li>
+                        地點：
+                        <span id="address">無</span>
+                    </li>
+                </ul>
+                <img
+                    id="delete"
+                    class="delete cursor"
+                    src="../static/images/icon/delete.png"
+                    alt=""
+                />
+            </div>
+        </div>
+        <div class="col-12 booking-your-info">
+            <h5>您的聯絡資訊</h5>
+            <label for="">
+                聯絡姓名：<input type="text" name="" id="" />
+            </label>
+            <label for="">
+                連絡信箱：<input type="text" name="" id="" />
+            </label>
+            <label for="">
+                手機號碼：<input type="text" name="" id="" />
+            </label>
+            <p>
+                請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。
+            </p>
+        </div>
+        <div class="col-12 booking-card-info">
+            <h5>信用卡付款資訊</h5>
+            <label for="">
+                卡片號碼：<input type="text" name="" id="" />
+            </label>
+            <label for="">
+                過期時間：<input type="text" name="" id="" />
+            </label>
+            <label for="">
+                驗證密碼：<input type="text" name="" id="" />
+            </label>
+        </div>
+        <div class="col-12 booking-confirm">
+            <span> 總價：新台幣 2000 元 </span>
+            <button class="btn-primary">確認訂購並付款</button>
+        </div>
+    </div>
+</section>
+
+<script>
+    let hasSession = /session/gi.test(decodeURIComponent(document.cookie))
+    if (!hasSession) {
+        location.href = '/'
+    }
+    let model = {
+        apiUrl: '/api/user',
+    }
+    let view = {
+        renderHandler(username, address, name, date, price, time, hasBooking) {
+            $('#userName').html(username)
+            $('#address').html(address)
+            $('#name').html(name)
+            $('#date').html(date)
+            $('#price').html(price)
+            $('#time').html(time)
+            $('#hasbooking').html('，待預訂的行程如下：')
+        },
+    }
+    let controller = {
+        initHandler: function () {
+            // 畫面初始化前
+            window.onbeforeunload = function () {}
+            // dom初始化後
+            document.addEventListener('DOMContentLoaded', function () {
+                promiseArr = [
+                    $ajax.get(model.apiUrl),
+                    $ajax.get('/api/booking'),
+                ]
+                Promise.all(promiseArr)
+                    .then((values) => {
+                        let username = values[0].data.name
+                        if (values[1].data) {
+                            let { address, id, images, name } =
+                                values[1].data.attraction
+                            let { date, price, time } = values[1].data
+                            let timestamp = Date.parse(date)
+                            let hasBooking = '，待預訂的行程如下：'
+
+                            date = new Date(timestamp)
+                                .toISOString()
+                                .split('T')[0]
+                            if (time === 'morning') {
+                                time = '早上 9 點到下午 4 點'
+                            }
+                            if (time === 'afternoon') {
+                                time = '中午 12 點到晚上 7 點'
+                            }
+                            view.renderHandler(
+                                username,
+                                address,
+                                name,
+                                date,
+                                price,
+                                time,
+                                hasBooking
+                            )
+                            return
+                        }
+                        $('#userName').html(username)
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+                $('#delete').on('click', () => {
+                    fetch('/api/booking', {
+                        method: 'delete',
+                        headers: new Headers({
+                            'Content-Type': 'application/json',
+                        }),
+                    })
+                        .then((res) => res.json())
+                        .then((res) => {
+                            if (res.ok) {
+                                location.reload()
+                                return
+                            }
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                        })
+                })
+            })
+            // 網頁的全部內容，包括圖片，CSS及<iframe> 初始化後
+            window.onload = function () {}
+        },
+    }
+
+    controller.initHandler()
+</script>
+{% endblock %}

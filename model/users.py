@@ -12,18 +12,19 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor()
 
 
-def get_user(email):
-    sql = f"SELECT * from users WHERE email like '{email}'"
+def get_user(id):
+    sql = f"SELECT * from users WHERE id like '{id}'"
     mycursor.execute(sql)
     return mycursor.fetchone()
 
 
 def check_account(email, password):
-    sql = f"SELECT count('id') FROM users WHERE email like '{email}' AND password like '{password}'"
+    sql = f"SELECT count('id'), id FROM users WHERE email like '{email}' AND password like '{password}'"
     mycursor.execute(sql)
     for user in mycursor:
         if user[0] != 0:
-            return True
+            print(user)
+            return user[1]
         else:
             return False
 

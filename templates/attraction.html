@@ -21,6 +21,13 @@
             </div>
         </div>
         <div class="attractionDetail-book col-6 col-768-12">
+            <input
+                id="attractionId"
+                type="text"
+                hidden="false"
+                name="attractionId"
+                class="bookingData"
+            />
             <h2 id="name">平安鐘</h2>
             <p id="subAddress">公共藝術 at 忠孝復興</p>
             <div class="attractionDetail-book-form">
@@ -30,7 +37,8 @@
                     <span class="title">選擇日期：</span>
                     <input
                         type="date"
-                        class="cursor"
+                        name="date"
+                        class="cursor bookingData"
                         style="height: 35px; padding-right: 5px"
                     />
                 </label>
@@ -43,9 +51,9 @@
                         <input
                             type="radio"
                             name="time"
-                            value="2000"
+                            value="morning"
                             checked="true"
-                            class="time-radio"
+                            class="time-radio bookingData"
                             id="morning"
                         />
                         <label for="morning" class="time-radio-replace"></label>
@@ -55,8 +63,8 @@
                         <input
                             type="radio"
                             name="time"
-                            value="2500"
-                            class="time-radio"
+                            value="afternoon"
+                            class="time-radio bookingData"
                             id="afternoon"
                         />
                         <label
@@ -68,9 +76,12 @@
                 </label>
                 <p>
                     <span class="title">導覽費用：</span>
-                    <span id="cost">新台幣 2000 元</span>
+                    新台幣
+                    <span class="bookingData" id="cost"> 2000 </span>元
                 </p>
-                <button class="btn-primary">開始預訂行程</button>
+                <button class="btn-primary" id="booking-btn">
+                    開始預訂行程
+                </button>
             </div>
         </div>
     </div>
@@ -97,6 +108,12 @@
         carouselFlag: false,
         dotIndex: 0,
         timerId: null,
+        bookingData: {
+            attractionId: '',
+            date: '',
+            time: '',
+            price: '',
+        },
         getAttractionDataHandler() {
             let urlArr = document.location.pathname.split('/')
             let id = urlArr[urlArr.length - 1]
@@ -118,12 +135,13 @@
             let promiseData = model.getAttractionDataHandler()
             promiseData
                 .then((res) => {
-                    console.log(res.data)
                     model.name = res.data.name
                     model.description = res.data.description
                     model.address = res.data.address
                     model.transport = res.data.transport
                     model.images = JSON.parse(res.data.images)
+                    model.attractionId = res.data.id
+                    $('#attractionId').val(model.attractionId)
                     $('#name').html(model.name)
                     $('#subAddress').html(model.address)
                     $('#description').html(model.description)
@@ -131,7 +149,6 @@
                     $('#transport').html(model.transport)
                     let imgStr = ''
                     let dotsStr = ''
-                    $log(model.images)
                     model.images.forEach((src, i) => {
                         imgStr = `${imgStr} <img src="${src}" alt="" draggable="false"/>`
                         if (i === 0) {
@@ -159,7 +176,12 @@
         },
         renderChangeTime() {
             $('[name=time]').each(function (dom) {
-                dom.checked === true && $('#cost').html(`新台幣${dom.value}元`)
+                dom.checked === true &&
+                    dom.value === 'afternoon' &&
+                    $('#cost').html(2500)
+                dom.checked === true &&
+                    dom.value === 'morning' &&
+                    $('#cost').html(2000)
             })
         },
     }
@@ -185,6 +207,82 @@
                     'webkitTransitionEnd',
                     that.animatedHandler
                 )
+                $('#booking-btn').on('click', () => {
+                    let hasSession = /session/gi.test(
+                        decodeURIComponent(document.cookie)
+                    )
+                    let hasErr = false
+                    if (hasSession) {
+                        $('.bookingData').each((dom) => {
+                            if (dom.type === 'radio' && dom.checked == false)
+                                return
+                            if (!dom.name) {
+                                model.bookingData['price'] =
+                                    dom.innerText.replace(/\s/g, '')
+                                return
+                            }
+                            if (!dom.value) {
+                                dom.style.border = '1px solid rgb(146, 27, 27)'
+                                hasErr = true
+                            } else {
+                                dom.style.border = '1px solid #757575'
+                            }
+                            
+                            model.bookingData[dom.name] = dom.value
+                        })
+                        if (hasErr) return
+
+                        fetch('/api/booking', {
+                            method: 'post',
+                            body: JSON.stringify(model.bookingData), // must match 'Content-Type'
+                            headers: new Headers({
+                                'Content-Type': 'application/json',
+                            }),
+                        })
+                            .then((res) => res.json())
+                            .then((res) => {
+                                if (res.ok) {
+                                    location.href = '/booking'
+                                    return
+                                }
+                                $('.confirm-cover').add('confirm-cover--active')
+                                $('.confirm-content').html(res.message)
+                                $('#confirm-sure').on('click', () => {
+                                    fetch('/api/booking', {
+                                        method: 'patch',
+                                        body: JSON.stringify(model.bookingData), // must match 'Content-Type'
+                                        headers: new Headers({
+                                            'Content-Type': 'application/json',
+                                        }),
+                                    })
+                                        .then((res) => res.json())
+                                        .then((res) => {
+                                            if (res.ok) {
+                                                location.href = '/booking'
+                                                return
+                                            }
+                                            $('.confirm-cover').remove(
+                                                'confirm-cover--active'
+                                            )
+                                            $('.confirm-cover').add(
+                                                'confirm-cover--active'
+                                            )
+                                            $('.confirm-content').html(
+                                                res.message
+                                            )
+                                        })
+                                        .catch((err) => {
+                                            console.log(err)
+                                        })
+                                })
+                            })
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                        return
+                    }
+                    $('.alert').add('alert--active')
+                })
             })
             // 網頁的全部內容，包括圖片，CSS及<iframe> 初始化後
             window.onload = function () {

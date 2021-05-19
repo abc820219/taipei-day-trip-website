@@ -18,10 +18,24 @@
         <link rel="stylesheet" href="../static/css/banner.css" />
         <link rel="stylesheet" href="../static/css/footer.css" />
         <link rel="stylesheet" href="../static/css/alert.css" />
+        <link rel="stylesheet" href="../static/css/confirm.css" />
         <link rel="stylesheet" href="../static/css/grid-system.css" />
         <script src="../static/js/ilibrary.js"></script>
     </head>
     <body>
+        <div class="confirm-cover">
+            <div class="confirm">
+                <div class="confirm-content">無</div>
+                <div>
+                    <button class="btn btn-primary" id="confirm-sure">
+                        確定
+                    </button>
+                    <button class="btn btn-primary" id="confirm-cancel">
+                        取消
+                    </button>
+                </div>
+            </div>
+        </div>
         <div class="alert">
             <form class="alert-form" id="login">
                 <h3>
@@ -54,7 +68,7 @@
                     </h1>
                     <ul class="d-flex align-items-center">
                         <li>
-                            <a href="javascript:;">預定行程</a>
+                            <a href="javascript:;" id="booking">預定行程</a>
                         </li>
                         <li id="loginTxt" class="cursor">
                             <a href="javascript:;">登入/註冊</a>
@@ -124,7 +138,19 @@
                                 console.log(err)
                             })
                         $('.alert-form').on('click', view.formRender)
+
+                        $('#booking').on('click', controller.bookingHandler)
                     })
+                },
+                bookingHandler() {
+                    let hasSession = /session/gi.test(
+                        decodeURIComponent(document.cookie)
+                    )
+                    if (hasSession) {
+                        location.href = '/booking'
+                        return
+                    }
+                    $('.alert').add('alert--active')
                 },
                 eventBindHandler(isLogin = false) {
                     if (!isLogin) {
@@ -197,7 +223,13 @@
                         })
                         return
                     }
+                    $('#confirm-cancel').on('click', () => {
+                        $('.confirm-cover').remove('confirm-cover--active')
+                    })
 
+                    $('.confirm-cover').on('click', () => {
+                        $('.confirm-cover').remove('confirm-cover--active')
+                    })
                     $('#loginTxt').on('click', () => {
                         fetch(model.postUrl, {
                             method: 'DELETE',
@@ -224,14 +256,12 @@
             let view = {
                 headerRender() {},
                 formContentRender(isErr) {
-                    console.log(isErr)
                     if (isErr) {
                         $('#LoginLogoutInfo').html(`
                                     <small class="danger" style="margin-bottom:10px;display:inline-block">${res.message}</small>
                                     `)
                         return
                     }
-                    console.log(isErr)
                     $('#LoginLogoutInfo').html(`
                                     <small class="success"  style="margin-bottom:10px;display:inline-block">${
                                         model.postMethod === 'POST'
