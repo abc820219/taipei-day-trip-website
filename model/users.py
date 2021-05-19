@@ -12,19 +12,19 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor()
 
 
-def get_user(email):
-    sql = f"SELECT * from users WHERE email like '{email}'"
+def get_user(id):
+    sql = f"SELECT * from users WHERE id like '{id}'"
     mycursor.execute(sql)
     return mycursor.fetchone()
 
 
 def check_account(email, password):
-    sql = f"SELECT count('id') FROM users WHERE email like '{email}' AND password like '{password}'"
+    sql = f"SELECT id FROM users WHERE email like '{email}' AND password like '{password}'"
     mycursor.execute(sql)
-    for user in mycursor:
-        if user[0] != 0:
-            return True
-        else:
+    userId = mycursor.fetchone()
+    if userId != None:
+            return userId[0]
+    else:
             return False
 
 
@@ -33,7 +33,8 @@ def insert_user(name, email, password):
     sql = f"insert into users value(null,'{name}','{password}','{email}')"
     mycursor.execute(sql)
     mydb.commit()
-    isSucceeded = check_account(email, password)
+    if mycursor.rowcount == 1:
+        isSucceeded = True
     return isSucceeded
 
 

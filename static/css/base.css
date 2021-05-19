@@ -1,6 +1,6 @@
 * {
     box-sizing: border-box;
-    letter-spacing:1px;
+    letter-spacing:0.5px;
 }
 body {
     font-family: 'Noto Sans TC', sans-serif;
@@ -53,3 +53,4 @@ button {
 button:hover {
     background-color: var(--primary-light);
 }
+

@@ -166,7 +166,6 @@
                         .then((res) => {
                             page = res.data.page
                             if (!res.data.data.length || !res.data.data) {
-                                $log(res)
                                 $('.attractions-list').html(
                                     '<li class="attractions-list--empty">找不到資料...</li>'
                                 )

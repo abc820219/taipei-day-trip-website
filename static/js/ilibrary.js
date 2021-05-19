@@ -55,8 +55,8 @@
             this.parse = new DOMParser()
         }
         each(fn) {
-            this.doms.forEach((dom,i) => {
-                fn(dom,i)
+            this.doms.forEach((dom, i) => {
+                fn(dom, i)
             })
         }
         // html區域
@@ -79,7 +79,6 @@
                 return
             }
             this.doms.forEach((dom) => {
-                console.log(dom)
                 this.doms[0].parentNode.removeChild(dom)
             })
         }
@@ -112,7 +111,7 @@
         // 事件區域
         // addEventListener
         on(event, func) {
-            console.log(this.doms)
+            // console.log(this.doms)
             if (!this.doms.length) return
             if (this.doms.length === 1) {
                 this.doms[0].addEventListener(event, func)
@@ -122,11 +121,24 @@
                 dom.addEventListener(event, func)
             })
         }
-        // input
-        // inputDom.value
-        val() {
+        removeOn(type,func) {
             if (!this.doms.length) return
             if (this.doms.length === 1) {
+                this.doms[0].removeEventListener(type,func)
+                return
+            }
+            this.doms.forEach((dom) => {
+                dom.removeEventListener(type,func)
+            })
+        }
+        // input
+        // inputDom.value
+        val(value) {
+            if (!this.doms.length) return
+            if (this.doms.length === 1) {
+                if (value) {
+                    return (this.doms[0].value = value)
+                }
                 return this.doms[0].value
             }
         }
@@ -204,10 +216,6 @@
                 }
                 xhr.e
             })
-        }
-        post(data) {
-            console.log('post')
-            // 回傳promise
         }
     }
     window.$ajax = new Iquery.prototype.Ajax()

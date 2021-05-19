@@ -22,12 +22,17 @@ mycursor = db.cursor()
 #     mycursor.execute(sql)
 # createAttractionsTable()
 
-def createUsersTable():
-    sql = "create table users(id bigint not null auto_increment primary key comment '流水號', name varchar(255) not null, password varchar(255) not null, email varchar(255) not null)"
+# def createUsersTable():
+#     sql = "create table users(id bigint not null auto_increment primary key comment '流水號', name varchar(255) not null, password varchar(255) not null, email varchar(255) not null)"
+#     mycursor.execute(sql)
+# createUsersTable()
+
+def createBookingTable():
+    sql = "create table booking(id bigint not null auto_increment primary key comment '流水號', userid int not null comment '使用者id', attractionId int not null comment '景點id', date date not null comment '預約日期', time varchar(255) not null comment '時段', price int not null comment '價錢')"
     mycursor.execute(sql)
 
+createBookingTable()
 
-createUsersTable()
 
 # def insertAttractionsSql(i):
 #     sql = None

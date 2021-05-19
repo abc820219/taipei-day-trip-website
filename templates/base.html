@@ -18,10 +18,24 @@
         <link rel="stylesheet" href="../static/css/banner.css" />
         <link rel="stylesheet" href="../static/css/footer.css" />
         <link rel="stylesheet" href="../static/css/alert.css" />
+        <link rel="stylesheet" href="../static/css/confirm.css" />
         <link rel="stylesheet" href="../static/css/grid-system.css" />
         <script src="../static/js/ilibrary.js"></script>
     </head>
     <body>
+        <div class="confirm-cover">
+            <div class="confirm">
+                <div class="confirm-content">無</div>
+                <div>
+                    <button class="btn btn-primary" id="confirm-sure">
+                        確定
+                    </button>
+                    <button class="btn btn-primary" id="confirm-cancel">
+                        取消
+                    </button>
+                </div>
+            </div>
+        </div>
         <div class="alert">
             <form class="alert-form" id="login">
                 <h3>
@@ -33,7 +47,7 @@
                     />
                 </h3>
                 <input type="text" name="email" placeholder="輸入電子信箱" />
-                <input type="text" name="password" placeholder="輸入密碼" />
+                <input type="password" name="password" placeholder="輸入密碼" />
                 <button class="btn-primary">登入帳戶</button>
                 <div id="LoginLogoutInfo"></div>
                 <a href="javascript:;" id="changeForm">還沒有帳戶？點此註冊</a>
@@ -54,7 +68,7 @@
                     </h1>
                     <ul class="d-flex align-items-center">
                         <li>
-                            <a href="javascript:;">預定行程</a>
+                            <a href="javascript:;" id="booking">預定行程</a>
                         </li>
                         <li id="loginTxt" class="cursor">
                             <a href="javascript:;">登入/註冊</a>
@@ -71,7 +85,7 @@
             let model = {
                 postData: {},
                 postUrl: '/api/user',
-                postMethod: 'POST',
+                postMethod: 'PATCH',
             }
             let temp = {
                 registerForm: ` <h3>
@@ -84,7 +98,7 @@
                 </h3>
                 <input type="text" name="name" placeholder="輸入姓名" />
                 <input type="text" name="email" placeholder="輸入電子信箱" />
-                <input type="text" name="password" placeholder="輸入密碼" />
+                <input type="password" name="password" placeholder="輸入密碼" />
                 <button class="btn-primary">登入帳戶</button>
                 <div id="LoginLogoutInfo"></div>
                 <a href="javascript:;" id="changeForm">已經有帳戶了？點此登入</a>`,
@@ -97,7 +111,7 @@
                     />
                 </h3>
                 <input type="text" name="email"  placeholder="輸入電子信箱" />
-                <input type="text" name="password" placeholder="輸入密碼" />
+                <input type="password" name="password" placeholder="輸入密碼" />
                 <button class="btn-primary">登入帳戶</button>
                 <div id="LoginLogoutInfo"></div>
                 <a href="javascript:;" id="changeForm"
@@ -124,7 +138,19 @@
                                 console.log(err)
                             })
                         $('.alert-form').on('click', view.formRender)
+
+                        $('#booking').on('click', controller.bookingHandler)
                     })
+                },
+                bookingHandler() {
+                    let hasSession = /session/gi.test(
+                        decodeURIComponent(document.cookie)
+                    )
+                    if (hasSession) {
+                        location.href = '/booking'
+                        return
+                    }
+                    $('.alert').add('alert--active')
                 },
                 eventBindHandler(isLogin = false) {
                     if (!isLogin) {
@@ -176,12 +202,12 @@
                                     }
                                     $('#LoginLogoutInfo').html(`
                                     <small class="success"  style="margin-bottom:10px;display:inline-block">${
-                                        model.postMethod === 'POST'
+                                        model.postMethod === 'PATCH'
                                             ? '登入成功'
                                             : '註冊成功'
                                     }</small>
                                     `)
-                                    if (model.postMethod === 'POST') {
+                                    if (model.postMethod === 'PATCH') {
                                         window.location.reload()
                                     }
                                     $('.alert-form input').each(function (dom) {
@@ -197,7 +223,13 @@
                         })
                         return
                     }
+                    $('#confirm-cancel').on('click', () => {
+                        $('.confirm-cover').remove('confirm-cover--active')
+                    })
 
+                    $('.confirm-cover').on('click', () => {
+                        $('.confirm-cover').remove('confirm-cover--active')
+                    })
                     $('#loginTxt').on('click', () => {
                         fetch(model.postUrl, {
                             method: 'DELETE',
@@ -224,14 +256,12 @@
             let view = {
                 headerRender() {},
                 formContentRender(isErr) {
-                    console.log(isErr)
                     if (isErr) {
                         $('#LoginLogoutInfo').html(`
                                     <small class="danger" style="margin-bottom:10px;display:inline-block">${res.message}</small>
                                     `)
                         return
                     }
-                    console.log(isErr)
                     $('#LoginLogoutInfo').html(`
                                     <small class="success"  style="margin-bottom:10px;display:inline-block">${
                                         model.postMethod === 'POST'
@@ -253,13 +283,13 @@
                         if (this.id === 'login') {
                             this.innerHTML = temp.registerForm
                             this.id = 'register'
-                            model.postMethod = 'PATCH'
+                            model.postMethod = 'POST'
                             controller.eventBindHandler()
                             return
                         }
                         this.innerHTML = temp.loginForm
                         this.id = 'login'
-                        model.postMethod = 'POST'
+                        model.postMethod = 'PATCH'
                         controller.eventBindHandler()
                     }
                 },

@@ -7,8 +7,10 @@ from controller import *
 app = Flask(__name__)
 app.register_blueprint(attractionApp)
 app.register_blueprint(usersApp)
+app.register_blueprint(bookingApp)
 app.config["JSON_AS_ASCII"] = False
 app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config["SESSION_COOKIE_HTTPONLY"] = False
 # Pages
 load_dotenv()
 # session密碼
