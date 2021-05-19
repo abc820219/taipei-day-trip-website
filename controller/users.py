@@ -4,20 +4,6 @@ usersApp = Blueprint('usersApp', __name__)
 
 
 @usersApp.route("/api/user", methods=["POST"])
-def loginHandler():
-    data = request.get_json()
-    email = data['email']
-    password = data['password']
-    canLogin = False
-    canLogin = check_account(email, password)
-    if canLogin != False:
-        session.permanent = True
-        session["id"] = canLogin
-    result = json.dumps(registerLoginLogoutInfo(canLogin, "登入失敗").getMessage())
-    return result
-
-
-@ usersApp.route("/api/user", methods=["PATCH"])
 def registerLoginHandler():
     data = request.get_json()
     name = data['name']
@@ -37,6 +23,20 @@ def registerLoginHandler():
         return registerLoginLogoutInfo(False, "註冊失敗").getMessage()
 
 
+@usersApp.route("/api/user", methods=["PATCH"])
+def loginHandler():
+    data = request.get_json()
+    email = data['email']
+    password = data['password']
+    canLogin = False
+    canLogin = check_account(email, password)
+    if canLogin != False:
+        session.permanent = True
+        session["id"] = canLogin
+    result = json.dumps(registerLoginLogoutInfo(canLogin, "登入失敗").getMessage())
+    return result
+
+
 @usersApp.route("/api/user", methods=["GET"])
 def checkUserIsLogin():
     if "id" in session:
@@ -52,6 +52,6 @@ def checkUserIsLogin():
 
 
 @usersApp.route("/api/user", methods=["DELETE"])
-def logoutHandler():    
+def logoutHandler():
     session.clear()
     return json.dumps(True)

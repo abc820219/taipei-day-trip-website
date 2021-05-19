@@ -121,13 +121,23 @@
                 dom.addEventListener(event, func)
             })
         }
+        removeOn(type,func) {
+            if (!this.doms.length) return
+            if (this.doms.length === 1) {
+                this.doms[0].removeEventListener(type,func)
+                return
+            }
+            this.doms.forEach((dom) => {
+                dom.removeEventListener(type,func)
+            })
+        }
         // input
         // inputDom.value
         val(value) {
             if (!this.doms.length) return
             if (this.doms.length === 1) {
                 if (value) {
-                    return this.doms[0].value = value
+                    return (this.doms[0].value = value)
                 }
                 return this.doms[0].value
             }

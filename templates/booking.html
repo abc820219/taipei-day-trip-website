@@ -11,8 +11,9 @@
             <div class="d-flex">
                 <div class="booking-attraction-info-imgBox">
                     <img
-                        src="http://www.travel.taipei/d_upload_ttn/sceneadmin/pic/11002891.jpg"
+                        src=""
                         alt=""
+                        onerror="this.src='https://www.smartm.com.tw/data/Images/7f/ee/58/d0/8bb3085e880ac04dbe23c27.jpg?v=1590940810.jpg'"
                     />
                 </div>
                 <ul>
@@ -81,7 +82,16 @@
         apiUrl: '/api/user',
     }
     let view = {
-        renderHandler(username, address, name, date, price, time, hasBooking) {
+        renderHandler(
+            username,
+            address,
+            name,
+            date,
+            price,
+            time,
+            hasBooking,
+            images
+        ) {
             $('#userName').html(username)
             $('#address').html(address)
             $('#name').html(name)
@@ -89,6 +99,8 @@
             $('#price').html(price)
             $('#time').html(time)
             $('#hasbooking').html('，待預訂的行程如下：')
+            $('.booking-attraction-info-imgBox > img').doms[0].src =
+                JSON.parse(images)[0]
         },
     }
     let controller = {
@@ -127,7 +139,8 @@
                                 date,
                                 price,
                                 time,
-                                hasBooking
+                                hasBooking,
+                                images
                             )
                             return
                         }
@@ -137,22 +150,44 @@
                         console.log(err)
                     })
                 $('#delete').on('click', () => {
-                    fetch('/api/booking', {
-                        method: 'delete',
-                        headers: new Headers({
-                            'Content-Type': 'application/json',
-                        }),
-                    })
-                        .then((res) => res.json())
-                        .then((res) => {
-                            if (res.ok) {
-                                location.reload()
-                                return
-                            }
+                    $('.confirm-cover').add('confirm-cover--active')
+                    $('.confirm-content').html('是否取消行程?')
+
+                    $('#confirm-sure').on('click', confirmDelBookHandler)
+
+                    function confirmDelBookHandler() {
+                        fetch('/api/booking', {
+                            method: 'delete',
+                            headers: new Headers({
+                                'Content-Type': 'application/json',
+                            }),
                         })
-                        .catch((err) => {
-                            console.log(err)
-                        })
+                            .then((res) => res.json())
+                            .then((res) => {
+                                if (res.ok) {
+                                    location.reload()
+                                    return
+                                }
+                                if (res.error) {
+                                    $('.confirm-cover').add(
+                                        'confirm-cover--active'
+                                    )
+                                    $('.confirm-content').html(res.message)
+                                    $('#confirm-sure').on('click', () => {
+                                        $('.confirm-cover').remove(
+                                            'confirm-cover--active'
+                                        )
+                                    })
+                                }
+                            })
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                        $('#confirm-sure').removeOn(
+                            'click',
+                            confirmDelBookHandler
+                        )
+                    }
                 })
             })
             // 網頁的全部內容，包括圖片，CSS及<iframe> 初始化後
