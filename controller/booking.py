@@ -25,6 +25,7 @@ def updateBookingHandler():
     date = data["date"]
     time = data["time"]
     price = data["price"]
+    isSucceeded = False
     isSucceeded = update_booking(attractionId, date, time, price)
     if isSucceeded:
         return bookingInfo(True, None).getMessage()

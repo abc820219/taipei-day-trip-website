@@ -21,11 +21,10 @@ def get_user(id):
 def check_account(email, password):
     sql = f"SELECT id FROM users WHERE email like '{email}' AND password like '{password}'"
     mycursor.execute(sql)
-    for user in mycursor:
-        if user[0] != 0:
-            print(user)
-            return user[0]
-        else:
+    userId = mycursor.fetchone()
+    if userId != None:
+            return userId[0]
+    else:
             return False
 
 
@@ -34,7 +33,6 @@ def insert_user(name, email, password):
     sql = f"insert into users value(null,'{name}','{password}','{email}')"
     mycursor.execute(sql)
     mydb.commit()
-    print(mycursor.rowcount)
     if mycursor.rowcount == 1:
         isSucceeded = True
     return isSucceeded

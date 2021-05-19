@@ -21,51 +21,60 @@ def get_booking(userid):
     else:
         return False
 
-    sql = f"select booking.date, booking.time, booking.price, attractions.id, attractions.name, attractions.address, attractions.images   from booking inner join attractions on attractions.id = '{attractionId}'"
-    mycursor.execute(sql)
-    data = mycursor.fetchone()
-    print(data)
-    return data
+    hasBeenBooking = check_booking(userid)
+    if hasBeenBooking == True:
+        sql = f"select booking.date, booking.time, booking.price, attractions.id, attractions.name, attractions. address, attractions.images from booking inner join attractions on attractions.id = '{attractionId}'"
+        mycursor.execute(sql)
+        data = mycursor.fetchall()
+        return data[0]
+    else:
+        return False
 
 
 def update_booking(attractionId, date, time, price):
     sql = f"update booking set attractionId='{attractionId}', date='{date}', time='{time}', price='{price}'"
     mycursor.execute(sql)
     mydb.commit()
+    mycursor.fetchone()
     if mycursor.rowcount == 1:
         return True
     return False
 
 
 def check_booking(userid):
-    sql = f"select count('id') from booking where userid like '{userid}'"
+    sql = f"select id from booking where userid like '{userid}'"
     mycursor.execute(sql)
-    for user in mycursor:
-        if user[0] != 0:
-            return True
-        else:
-            return False
+    mycursor.fetchone()
+    print(mycursor.rowcount)
+    if mycursor.rowcount == 1:
+        return True
+    else:
+        return False
 
 
 def insert_booking(userid, attractionId, date, time, price):
-    isSucceeded = False
-    isSucceeded = check_booking(userid)
-    if isSucceeded == True:
+    hasBeenBooking = False
+    hasBeenBooking = check_booking(userid)
+    if hasBeenBooking == True:
         return False
     sql = f"insert into booking value (null,'{userid}','{attractionId}','{date}','{time}','{price}' )"
     mycursor.execute(sql)
     mydb.commit()
-    isSucceeded = check_booking(userid)
-    return isSucceeded
+    if mycursor.rowcount == 1:
+        return True
 
 
 def delete_booking(userid):
-    sql = f"delete from booking where userid = {userid}"
-    mycursor.execute(sql)
-    mydb.commit()
-    if mycursor.rowcount == 1:
-        return True
-    return False
+    hasBeenBooking = check_booking(userid)
+    if hasBeenBooking == True:
+        sql = f"delete from booking where userid = {userid}"
+        mycursor.execute(sql)
+        mydb.commit()
+        if mycursor.rowcount == 1:
+            return True
+        return False
+    else:
+        return False
 
 
 class bookingInfo:
