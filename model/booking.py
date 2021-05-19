@@ -31,8 +31,8 @@ def get_booking(userid):
         return False
 
 
-def update_booking(attractionId, date, time, price):
-    sql = f"update booking set attractionId='{attractionId}', date='{date}', time='{time}', price='{price}'"
+def update_booking(attractionId, date, time, price, usersId):
+    sql = f"update booking set attractionId='{attractionId}', date='{date}', time='{time}', price='{price}' where userId='{usersId}'"
     mycursor.execute(sql)
     mydb.commit()
     mycursor.fetchone()
