@@ -24,7 +24,7 @@ def check_account(email, password):
     for user in mycursor:
         if user[0] != 0:
             print(user)
-            return user[1]
+            return user[0]
         else:
             return False
 
