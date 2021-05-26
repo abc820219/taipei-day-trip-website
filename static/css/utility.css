@@ -4,7 +4,6 @@
     margin: 0 auto;
 }
 
-
 .d-flex {
     display: flex;
 }
@@ -37,10 +36,17 @@
 }
 
 .danger {
-    color: var(--danger)
+    color: var(--danger);
 }
 
 .success {
-    color: var(--success)
+    color: var(--success);
 }
 
+.tpfield {
+    height: 40px;
+    width: 200px;
+    border: 1px solid #e8e8e8;
+    margin: 5px 0;
+    padding: 5px;
+}

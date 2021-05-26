@@ -190,8 +190,6 @@
         initHandler() {
             let that = this
 
-            // 畫面初始化前
-            window.onbeforeunload = function () {}
             // dom初始化後
             document.addEventListener('DOMContentLoaded', function () {
                 $log('dom Ok')
@@ -227,7 +225,7 @@
                             } else {
                                 dom.style.border = '1px solid #757575'
                             }
-                            
+
                             model.bookingData[dom.name] = dom.value
                         })
                         if (hasErr) return
@@ -291,6 +289,10 @@
                 model.timerId = setInterval(() => {
                     that.imgHandler('next')
                 }, 3000)
+            }
+
+            window.onbeforeunload = function () {
+                window.scrollTo(0, 0)
             }
         },
         imgHandler(str) {

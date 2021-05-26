@@ -8,6 +8,7 @@ app = Flask(__name__)
 app.register_blueprint(attractionApp)
 app.register_blueprint(usersApp)
 app.register_blueprint(bookingApp)
+app.register_blueprint(ordersApp)
 app.config["JSON_AS_ASCII"] = False
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["SESSION_COOKIE_HTTPONLY"] = False
@@ -67,4 +68,4 @@ def thankyou():
 if os.getenv("SERVER_HOST"):
     app.run(host="0.0.0.0", port=3000)
 else:
-    app.run(port=3000)
+    app.run(port=5000)
