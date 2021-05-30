@@ -88,7 +88,7 @@ def getOrdersHandler(orderNumber):
                 "email": orderData[9],
                 "phone": orderData[10]
             },
-            "status": orderData[14]
+            "status": orderData[15]
         }
         return result
     else:
