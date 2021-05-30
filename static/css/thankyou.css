@@ -1,0 +1,20 @@
+.thankyou {
+    min-height: calc(100vh - 158px);
+}
+
+.thankyou h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.thankyou-list li {
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.thankyou-list img{
+  display: block;
+  object-fit: cover;
+  width: 500px;
+}
+

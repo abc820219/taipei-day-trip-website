@@ -37,7 +37,7 @@ def booking():
 
 @app.route("/thankyou")
 def thankyou():
-    return render_template("thankyou.html")
+    return render_template("thankyou.html",title="thankyou")
 # import math
 
 
@@ -68,4 +68,4 @@ def thankyou():
 if os.getenv("SERVER_HOST"):
     app.run(host="0.0.0.0", port=3000)
 else:
-    app.run(port=5000)
+    app.run(port=3000)

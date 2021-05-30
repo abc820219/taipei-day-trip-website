@@ -86,6 +86,17 @@
         bookingApiUrl: '/api/booking',
         userApiUrl: '/api/user',
         ordersApiUrl: '/api/orders',
+        trip: {
+            attraction: {
+                id: 10,
+                name: '平安鐘',
+                address: '臺北市大安區忠孝東路 4 段',
+                image: 'https://yourdomain.com/images/attraction/10.jpg',
+            },
+            date: '2022-01-31',
+            time: 'afternoon',
+        },
+        price: '',
     }
 
     let view = {
@@ -177,11 +188,11 @@
                 },
             })
             $('#paymentBtn').on('click', function () {
-                let postData = {}
+                let contactData = {}
                 let hasErr = false
 
                 $('.contentInfo').each((dom) => {
-                    postData[dom.name] = dom.value
+                    contactData[dom.name] = dom.value
                     if (!dom.value) {
                         dom.style.border = '1px solid rgb(146, 27, 27)'
                         hasErr = true
@@ -197,8 +208,7 @@
                 }
 
                 let tpdValue = TPDirect.card.getTappayFieldsStatus()
-                
-                console.log(tpdValue)
+
                 if (tpdValue.canGetPrime) {
                     new Promise(function (resolve, reject) {
                         TPDirect.card.getPrime((res) => {
@@ -206,16 +216,20 @@
                                 resolve(res.card.prime)
                                 return
                             }
-                        
                             reject('tapPay錯誤')
                         })
                     })
                         .then((prime) => {
+                            console.log(contactData)
                             fetch(model.ordersApiUrl, {
                                 method: 'POST',
                                 body: JSON.stringify({
-                                    ...postData,
-                                    prime,
+                                    prime: prime,
+                                    order: {
+                                        price: model.price,
+                                        trip: model.trip,
+                                        contact: contactData,
+                                    },
                                 }),
                                 headers: new Headers({
                                     'Content-type': 'application/json',
@@ -224,6 +238,21 @@
                                 .then((res) => res.json())
                                 .then((res) => {
                                     // 成功後的code
+                                    console.log(res.data)
+                                    let {
+                                        payment: { status },
+                                        number,
+                                    } = res.data
+                                    if (status === 0) {
+                                        location.href = `/thankyou?number=${number}`
+                                    } else {
+                                        $('.confirm-cover').add(
+                                            'confirm-cover--active'
+                                        )
+                                        $('.confirm-content').html(
+                                            '信用卡付款資訊不正確'
+                                        )
+                                    }
                                 })
                                 .catch((err) => {
                                     $('.confirm-cover').add(
@@ -258,6 +287,13 @@
                             let { date, price, time } = values[1].data
                             let timestamp = Date.parse(date)
                             let hasBooking = '，待預訂的行程如下：'
+                            model.trip.attraction.id = id
+                            model.trip.attraction.name = name
+                            model.trip.attraction.address = address
+                            model.trip.attraction.image = JSON.parse(images)[0]
+                            model.trip.time = date
+                            model.trip.date = time
+                            model.price = price
 
                             date = new Date(timestamp)
                                 .toISOString()
@@ -268,6 +304,7 @@
                             if (time === 'afternoon') {
                                 time = '中午 12 點到晚上 7 點'
                             }
+
                             view.renderHandler(
                                 username,
                                 address,

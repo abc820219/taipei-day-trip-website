@@ -8,9 +8,21 @@ ordersApp = Blueprint('ordersApp', __name__)
 def insertOrdersHandler():
     data = request.get_json()
     prime = data['prime']
-    
-    url = "https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime"
+    price = data['order']['price']
+    time = data['order']['trip']['time']
+    date = data['order']['trip']['date']
+    aid = data['order']['trip']['attraction']['id']
+    aname = data['order']['trip']['attraction']['name']
+    address = data['order']['trip']['attraction']['address']
+    image = data['order']['trip']['attraction']['image']
 
+    cname = data['order']['contact']['name']
+    email = data['order']['contact']['email']
+    phone = data['order']['contact']['phone']
+
+    uId = session['id']
+
+    url = "https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime"
     requestData = {
         "prime": prime,
         "partner_key": "partner_SDmf75bmU83MLWX6HonFPCsCFnXDNEoutXEwtqjdxWzMGP8Q2UfCx9GI",
@@ -27,19 +39,57 @@ def insertOrdersHandler():
         },
         "remember": False
     }
-
     resp = req.Request(
         url, headers={
             'Content-Type': 'application/json',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
             'x-api-key': 'partner_SDmf75bmU83MLWX6HonFPCsCFnXDNEoutXEwtqjdxWzMGP8Q2UfCx9GI'
-        }, data=json.dumps(requestData).encode("utf-8"))
-
+        }, data=json.dumps(requestData, ensure_ascii=False).encode("utf-8"))
     with req.urlopen(resp) as response:
         result = response.read().decode("utf-8")
-    print(result)
-    return result
+        result = json.loads(result)
+        if result['status'] == 0:
+            status = result['status']
+            recId = result['rec_trade_id']
+            isSuccess = insert_tappay(recId, status)
+            if isSuccess:
+                print(price)
+                isSuccess = insert_order(
+                    recId, aid, aname, address, image, date, time, cname, email, phone, price,uId)
+                if isSuccess:
+                    return orderInfo(status, recId, '付款成功').getMessage()
+                else:
+                    return orderInfo(status, recId, '付款失敗,訂單不成立').getMessage()
+            else:
+                return orderInfo(status, recId, '付款失敗,訂單不成立').getMessage()
+        else:
+            return orderInfo(999, "999", '付款失敗,訂單不成立').getMessage()
 
 
-# @ordersApp.route("/api/orders")
-# def getOrdersHandler():
+@ordersApp.route("/api/orders/<orderNumber>")
+def getOrdersHandler(orderNumber):
+    orderData = get_order(orderNumber)
+    print(orderData)
+    if orderData != False:
+        result = {
+            "number": orderData[1],
+            "price": orderData[11],
+            "trip": {
+                "attraction": {
+                    "id": orderData[2],
+                    "name": orderData[3],
+                    "address": orderData[4],
+                    "image": orderData[5]
+                },
+                "date": orderData[6],
+                "time": orderData[7]
+            },
+            "contact": {
+                "name": orderData[8],
+                "email": orderData[9],
+                "phone": orderData[10]
+            },
+            "status": orderData[14]
+        }
+        return result
+    else:
+        return orderInfo(999, "999", '找不到訂單').getMessage()

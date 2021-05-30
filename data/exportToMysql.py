@@ -22,16 +22,34 @@ mycursor = db.cursor()
 #     mycursor.execute(sql)
 # createAttractionsTable()
 
+
 # def createUsersTable():
 #     sql = "create table users(id bigint not null auto_increment primary key comment '流水號', name varchar(255) not null, password varchar(255) not null, email varchar(255) not null)"
 #     mycursor.execute(sql)
 # createUsersTable()
 
-def createBookingTable():
-    sql = "create table booking(id bigint not null auto_increment primary key comment '流水號', userid int not null comment '使用者id', attractionId int not null comment '景點id', date date not null comment '預約日期', time varchar(255) not null comment '時段', price int not null comment '價錢')"
+
+# def createBookingTable():
+#     sql = "create table booking(id bigint not null auto_increment primary key comment '流水號', userid int not null comment '使用者id', attractionId int not null comment '景點id', date date not null comment '預約日期', time varchar(255) not null comment '時段', price int not null comment '價錢')"
+#     mycursor.execute(sql)
+
+# createBookingTable()
+
+
+# def createTapPays():
+#     sql = "create table tapPays(id bigint not null auto_increment primary key comment '流水號', tapId varchar(255) not null comment '交易識別碼', status int not null comment '狀態碼')"
+#     mycursor.execute(sql)
+
+
+# createTapPays()
+
+
+def createOrders():
+    sql = "create table orders(id bigint not null auto_increment primary key comment '流水號',rid varchar(255) not null comment 'tappayID',aId int not null comment '景點ID', aname varchar(255) not null comment '景點名稱', address varchar(255) not null comment '景點地址', image varchar(255) not null comment '圖片url', date varchar(255) not null comment '景點日期', time varchar(255) not null comment '景點時段', cname varchar(255) not null comment'聯絡人', email varchar(255) not null comment '聯絡人email', phone varchar(255) not null comment '聯絡人電話',price Int not null, uId int not null comment '使用者Id')"
     mycursor.execute(sql)
 
-createBookingTable()
+
+createOrders()
 
 
 # def insertAttractionsSql(i):
