@@ -44,12 +44,12 @@ def createTapPays():
 createTapPays()
 
 
-def createOrders():
-    sql = "create table orders(id bigint not null auto_increment primary key comment '流水號',rid varchar(255) not null comment 'tappayID',aId int not null comment '景點ID', aname varchar(255) not null comment '景點名稱', address varchar(255) not null comment '景點地址', image varchar(255) not null comment '圖片url', date varchar(255) not null comment '景點日期', time varchar(255) not null comment '景點時段', cname varchar(255) not null comment'聯絡人', email varchar(255) not null comment '聯絡人email', phone varchar(255) not null comment '聯絡人電話',price Int not null, uId int not null comment '使用者Id')"
-    mycursor.execute(sql)
+# def createOrders():
+#     sql = "create table orders(id bigint not null auto_increment primary key comment '流水號',rid varchar(255) not null comment 'tappayID',aId int not null comment '景點ID', aname varchar(255) not null comment '景點名稱', address varchar(255) not null comment '景點地址', image varchar(255) not null comment '圖片url', date varchar(255) not null comment '景點日期', time varchar(255) not null comment '景點時段', cname varchar(255) not null comment'聯絡人', email varchar(255) not null comment '聯絡人email', phone varchar(255) not null comment '聯絡人電話',price Int not null, uId int not null comment '使用者Id')"
+#     mycursor.execute(sql)
 
 
-createOrders()
+# createOrders()
 
 
 # def insertAttractionsSql(i):
