@@ -36,12 +36,12 @@ mycursor = db.cursor()
 # createBookingTable()
 
 
-# def createTapPays():
-#     sql = "create table tapPays(id bigint not null auto_increment primary key comment '流水號', tapId varchar(255) not null comment '交易識別碼', status int not null comment '狀態碼')"
-#     mycursor.execute(sql)
+def createTapPays():
+    sql = "create table tapPays(id bigint not null auto_increment primary key comment '流水號', tapId varchar(255) not null comment '交易識別碼', status int not null comment '狀態碼')"
+    mycursor.execute(sql)
 
 
-# createTapPays()
+createTapPays()
 
 
 def createOrders():
