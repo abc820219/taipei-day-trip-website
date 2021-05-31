@@ -171,10 +171,7 @@
         },
         initHandler() {
             let that = this
-            // 畫面初始化前
-            window.onbeforeunload = function () {
-                window.scrollTo(0, 0)
-            }
+
             // dom初始化後
             document.addEventListener('DOMContentLoaded', function () {
                 $('#searchBtn').on('click', () => {
@@ -188,6 +185,10 @@
                 // $log('all Ok')
                 views.renderData()
                 that.scrollToBottomGetDataHandler()
+            }
+            // 跳轉或是關閉前
+            window.onbeforeunload = function () {
+                window.scrollTo(0, 0)
             }
         },
     }

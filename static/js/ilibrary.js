@@ -121,14 +121,14 @@
                 dom.addEventListener(event, func)
             })
         }
-        removeOn(type,func) {
+        removeOn(type, func) {
             if (!this.doms.length) return
             if (this.doms.length === 1) {
-                this.doms[0].removeEventListener(type,func)
+                this.doms[0].removeEventListener(type, func)
                 return
             }
             this.doms.forEach((dom) => {
-                dom.removeEventListener(type,func)
+                dom.removeEventListener(type, func)
             })
         }
         // input
@@ -201,7 +201,6 @@
             return new Promise((resolve, reject) => {
                 let xhr = new XMLHttpRequest()
                 xhr.open('GET', url, true)
-                xhr.send()
                 xhr.onload = function () {
                     let res = {
                         data: JSON.parse(this.responseText),
@@ -214,6 +213,7 @@
                     }
                     reject(res)
                 }
+                xhr.send()
                 xhr.e
             })
         }

@@ -42,13 +42,13 @@
         <div class="col-12 booking-your-info">
             <h5>您的聯絡資訊</h5>
             <label for="">
-                聯絡姓名：<input type="text" name="" id="" />
+                聯絡姓名：<input type="text" name="name" class="contentInfo" />
             </label>
             <label for="">
-                連絡信箱：<input type="text" name="" id="" />
+                連絡信箱：<input type="text" name="email" class="contentInfo" />
             </label>
             <label for="">
-                手機號碼：<input type="text" name="" id="" />
+                手機號碼：<input type="text" name="phone" class="contentInfo" />
             </label>
             <p>
                 請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。
@@ -56,31 +56,49 @@
         </div>
         <div class="col-12 booking-card-info">
             <h5>信用卡付款資訊</h5>
-            <label for="">
-                卡片號碼：<input type="text" name="" id="" />
-            </label>
-            <label for="">
-                過期時間：<input type="text" name="" id="" />
-            </label>
-            <label for="">
-                驗證密碼：<input type="text" name="" id="" />
-            </label>
+            <div for="" class="d-flex align-items-center">
+                卡片號碼：
+                <div class="tpfield" id="card-number"></div>
+            </div>
+            <div for="" class="d-flex align-items-center">
+                過期時間：
+                <div class="tpfield" id="card-expiration-date"></div>
+            </div>
+            <div for="" class="d-flex align-items-center">
+                驗證密碼：
+                <div class="tpfield" id="card-ccv"></div>
+            </div>
         </div>
         <div class="col-12 booking-confirm">
             <span> 總價：新台幣 2000 元 </span>
-            <button class="btn-primary">確認訂購並付款</button>
+            <button class="btn-primary" id="paymentBtn">確認訂購並付款</button>
         </div>
     </div>
 </section>
-
+<script src="https://js.tappaysdk.com/tpdirect/v5.7.0"></script>
 <script>
     let hasSession = /session/gi.test(decodeURIComponent(document.cookie))
     if (!hasSession) {
         location.href = '/'
     }
+
     let model = {
-        apiUrl: '/api/user',
+        bookingApiUrl: '/api/booking',
+        userApiUrl: '/api/user',
+        ordersApiUrl: '/api/orders',
+        trip: {
+            attraction: {
+                id: 10,
+                name: '平安鐘',
+                address: '臺北市大安區忠孝東路 4 段',
+                image: 'https://yourdomain.com/images/attraction/10.jpg',
+            },
+            date: '2022-01-31',
+            time: 'afternoon',
+        },
+        price: '',
     }
+
     let view = {
         renderHandler(
             username,
@@ -104,14 +122,161 @@
         },
     }
     let controller = {
-        initHandler: function () {
-            // 畫面初始化前
-            window.onbeforeunload = function () {}
+        sdkTpdHandler() {
+            TPDirect.setupSDK(
+                20429,
+                'app_jUKfXnRCJdJhwvcYn6pHvrpcxOjOz0l3ei4FYPNFgdos7lbYh9GTHfnnicUy',
+                'sandbox'
+            )
+            // 以下提供必填 CCV 以及選填 CCV 的 Example
+            // 必填 CCV Example
+            let fields = {
+                number: {
+                    // css selector
+                    element: '#card-number',
+                    placeholder: '**** **** **** ****',
+                },
+                expirationDate: {
+                    // DOM object
+                    element: '#card-expiration-date',
+                    placeholder: 'MM / YY',
+                },
+                ccv: {
+                    element: '#card-ccv',
+                    placeholder: '後三碼',
+                },
+            }
+
+            TPDirect.card.setup({
+                fields: fields,
+                styles: {
+                    // Style all elements
+                    input: {
+                        color: '#e8e8e8',
+                    },
+                    // Styling ccv field
+                    '#ccv': {
+                        // 'font-size': '16px'
+                    },
+                    // Styling expiration-date field
+                    '#expiration-date': {
+                        // 'font-size': '16px'
+                    },
+                    // Styling card-number field
+                    '#card-number': {
+                        // 'font-size': '16px'
+                    },
+                    // style focus state
+                    ':focus': {
+                        // 'color': 'black'
+                    },
+                    // style valid state
+                    '.valid': {
+                        color: 'green',
+                    },
+                    // style invalid state
+                    '.invalid': {
+                        color: 'red',
+                    },
+                    // Media queries
+                    // Note that these apply to the iframe, not the root window.
+                    '@media screen and (max-width: 400px)': {
+                        input: {
+                            color: '#000',
+                        },
+                    },
+                },
+            })
+            $('#paymentBtn').on('click', function () {
+                let contactData = {}
+                let hasErr = false
+
+                $('.contentInfo').each((dom) => {
+                    contactData[dom.name] = dom.value
+                    if (!dom.value) {
+                        dom.style.border = '1px solid rgb(146, 27, 27)'
+                        hasErr = true
+                    } else {
+                        dom.style.border = '1px solid #757575'
+                    }
+                })
+
+                if (hasErr) {
+                    $('.confirm-cover').add('confirm-cover--active')
+                    $('.confirm-content').html('必填寫欄位不得為空')
+                    return
+                }
+
+                let tpdValue = TPDirect.card.getTappayFieldsStatus()
+
+                if (tpdValue.canGetPrime) {
+                    new Promise(function (resolve, reject) {
+                        TPDirect.card.getPrime((res) => {
+                            if (res.status === 0) {
+                                resolve(res.card.prime)
+                                return
+                            }
+                            reject('tapPay錯誤')
+                        })
+                    })
+                        .then((prime) => {
+                            console.log(contactData)
+                            fetch(model.ordersApiUrl, {
+                                method: 'POST',
+                                body: JSON.stringify({
+                                    prime: prime,
+                                    order: {
+                                        price: model.price,
+                                        trip: model.trip,
+                                        contact: contactData,
+                                    },
+                                }),
+                                headers: new Headers({
+                                    'Content-type': 'application/json',
+                                }),
+                            })
+                                .then((res) => res.json())
+                                .then((res) => {
+                                    // 成功後的code
+                                    console.log(res.data)
+                                    let {
+                                        payment: { status },
+                                        number,
+                                    } = res.data
+                                    if (status === 0) {
+                                        location.href = `/thankyou?number=${number}`
+                                    } else {
+                                        $('.confirm-cover').add(
+                                            'confirm-cover--active'
+                                        )
+                                        $('.confirm-content').html(
+                                            '信用卡付款資訊不正確'
+                                        )
+                                    }
+                                })
+                                .catch((err) => {
+                                    $('.confirm-cover').add(
+                                        'confirm-cover--active'
+                                    )
+                                    $('.confirm-content').html(err)
+                                })
+                        })
+                        .catch((err) => {
+                            $('.confirm-cover').add('confirm-cover--active')
+                            $('.confirm-content').html(err)
+                        })
+                    return
+                }
+                $('.confirm-cover').add('confirm-cover--active')
+                $('.confirm-content').html('信用卡付款資訊不正確')
+            })
+        },
+        initHandler() {
             // dom初始化後
             document.addEventListener('DOMContentLoaded', function () {
                 promiseArr = [
-                    $ajax.get(model.apiUrl),
-                    $ajax.get('/api/booking'),
+                    $ajax.get(model.userApiUrl),
+                    $ajax.get(model.bookingApiUrl),
                 ]
                 Promise.all(promiseArr)
                     .then((values) => {
@@ -122,6 +287,13 @@
                             let { date, price, time } = values[1].data
                             let timestamp = Date.parse(date)
                             let hasBooking = '，待預訂的行程如下：'
+                            model.trip.attraction.id = id
+                            model.trip.attraction.name = name
+                            model.trip.attraction.address = address
+                            model.trip.attraction.image = JSON.parse(images)[0]
+                            model.trip.time = date
+                            model.trip.date = time
+                            model.price = price
 
                             date = new Date(timestamp)
                                 .toISOString()
@@ -132,6 +304,7 @@
                             if (time === 'afternoon') {
                                 time = '中午 12 點到晚上 7 點'
                             }
+
                             view.renderHandler(
                                 username,
                                 address,
@@ -156,7 +329,7 @@
                     $('#confirm-sure').on('click', confirmDelBookHandler)
 
                     function confirmDelBookHandler() {
-                        fetch('/api/booking', {
+                        fetch(model.bookingApiUrl, {
                             method: 'delete',
                             headers: new Headers({
                                 'Content-Type': 'application/json',
@@ -191,7 +364,12 @@
                 })
             })
             // 網頁的全部內容，包括圖片，CSS及<iframe> 初始化後
-            window.onload = function () {}
+            window.onload = function () {
+                controller.sdkTpdHandler()
+            }
+            window.onbeforeunload = function () {
+                window.scrollTo(0, 0)
+            }
         },
     }
 

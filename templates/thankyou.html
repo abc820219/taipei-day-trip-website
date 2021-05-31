@@ -1,0 +1,152 @@
+{% extends "base.html" %} {% block content %}
+<link rel="stylesheet" href="../static/css/thankyou.css" />
+<section class="thankyou container"></section>
+<script>
+    let hasSession = /session/gi.test(decodeURIComponent(document.cookie))
+    if (!hasSession) {
+        location.href = '/'
+    }
+    ;(() => {
+        let model = {
+            ordersUrl: `/api/orders/${location.search.split('=')[1]}`,
+        }
+        let temp = {
+            tempList(
+                status,
+                number,
+                price,
+                email,
+                name,
+                phone,
+                date,
+                time,
+                address,
+                tName,
+                image
+            ) {
+                return `
+                                <h2>訂單資訊</h2>
+                                <ul class="thankyou-list">
+                                    <li >
+                                        訂單編號 : ${number}
+                                    </li>
+                                    <li>
+                                        訂單狀態 : ${
+                                            status === 0
+                                                ? '訂購完成'
+                                                : '訂購失敗'
+                                        }
+                                    </li>
+                                    <li >
+                                        訂單價格 : ${price}元
+                                    </li>
+                                    <li>
+                                        聯絡人電話 : ${phone}
+                                    </li>
+                                    <li>
+                                        聯絡人姓名 : ${name}
+                                    </li>
+                                    <li>
+                                        聯絡人手機 : ${email}
+                                    </li>
+                                </ul>
+                                <h2>景點資訊</h2>
+                                <ul class="thankyou-list">
+                                    <li>
+                                        名稱 : ${tName}
+                                    </li>
+                                    <li >
+                                        地址 : ${address}
+                                    </li>
+                                    <li>
+                                        時間 : ${date}
+                                    </li>
+                                    <li>
+                                        時段 : ${time}
+                                    </li>
+                                    <li>
+                                        <p style="margin-bottom:20px">
+                                            景點照 :
+                                        </p>
+                                        <img src="${image}"/>
+                                    </li>
+                                </ul>
+                            `
+            },
+        }
+        let view = {
+            renderList(
+                status,
+                number,
+                price,
+                email,
+                name,
+                phone,
+                date,
+                time,
+                address,
+                tName,
+                image
+            ) {
+                let str = temp.tempList(
+                    status,
+                    number,
+                    price,
+                    email,
+                    name,
+                    phone,
+                    date,
+                    time,
+                    address,
+                    tName,
+                    image
+                )
+                $('.thankyou').html(str)
+            },
+        }
+
+        // 事件綁定
+        let controller = {
+            initHandler() {
+                $ajax
+                    .get(model.ordersUrl)
+                    .then((res) => {
+                        let { status, number, price } = res.data
+                        let { email, name, phone } = res.data.contact
+                        let { date, time } = res.data.trip
+                        let {
+                            address,
+                            name: tName,
+                            image,
+                        } = res.data.trip.attraction
+                        view.renderList(
+                            status,
+                            number,
+                            price,
+                            email,
+                            name,
+                            phone,
+                            date,
+                            time,
+                            address,
+                            tName,
+                            image
+                        )
+                    })
+                    .catch((err) => {
+                        $('.confirm-cover').add('confirm-cover--active')
+                        $('.confirm-content').html('查無此筆訂單')
+                        $('.thankyou').html(
+                            '<div style="text-align:center">查無此筆訂單<div>'
+                        )
+                    })
+            },
+            eventBindHandler(isLogin = false) {},
+        }
+
+        // 註冊登入form
+
+        controller.initHandler()
+    })()
+</script>
+{% endblock %}
