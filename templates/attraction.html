@@ -229,6 +229,7 @@
                             model.bookingData[dom.name] = dom.value
                         })
                         if (hasErr) return
+                        loadingHandler()
 
                         fetch('/api/booking', {
                             method: 'post',
@@ -276,6 +277,9 @@
                             })
                             .catch((err) => {
                                 console.log(err)
+                            })
+                            .finally(() => {
+                                loadingHandler()
                             })
                         return
                     }
