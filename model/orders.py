@@ -10,10 +10,10 @@ poolsize = 3
 connectionpool = mysql.connector.pooling.MySQLConnectionPool(
     pool_name=poolname,
     pool_reset_session=True,
-    host="localhost",
-    user="root",
-    password="SERVER_DB_PASSWORD",
-    database="SERVER_DB_PASSWORD"
+    host=os.getenv("SERVER_DB_HOST"),
+    user=os.getenv("SERVER_DB_USER"),
+    password=os.getenv("SERVER_DB_PASSWORD"),
+    database=os.getenv("SERVER_DB_DATABASE")
 )
 mydb = connectionpool.get_connection()
 mycursor = mydb.cursor()
