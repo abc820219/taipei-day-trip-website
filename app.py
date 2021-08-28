@@ -67,7 +67,7 @@ def thankyou():
 #     return result
 
 
-if os.getenv("SERVER_HOST"):
+# if os.getenv("SERVER_HOST"):
     app.run(host="0.0.0.0", port=3001)
-else:
-    app.run(port=3001)
+# else:
+#     app.run(port=3001)
