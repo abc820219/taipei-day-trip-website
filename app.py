@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
-import os
+# import os
 from flask import *
+from flask_cors import CORS
 from controller import *
 from datetime import timedelta
 from controller import *
@@ -12,6 +13,7 @@ app.register_blueprint(ordersApp)
 app.config["JSON_AS_ASCII"] = False
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["SESSION_COOKIE_HTTPONLY"] = False
+CORS(app)
 # Pages
 load_dotenv()
 # session密碼
@@ -65,7 +67,7 @@ def thankyou():
 #     return result
 
 
-if os.getenv("SERVER_HOST"):
-    app.run(host="0.0.0.0", port=3000)
-else:
-    app.run(port=3000)
+# if os.getenv("SERVER_HOST"):
+#     app.run(host="0.0.0.0", port=3000)
+# else:
+app.run(port=3001)
