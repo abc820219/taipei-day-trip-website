@@ -72,6 +72,7 @@
                 model.page,
                 keyword
             )
+            loadingHandler()
             promiseResult
                 .then((res) => {
                     model.page = res.data.page
@@ -121,6 +122,9 @@
                 .catch((err) => {
                     $log(err)
                     model.scrollFlag = false
+                })
+                .finally(() => {
+                    loadingHandler()
                 })
         },
     }

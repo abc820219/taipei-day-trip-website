@@ -211,6 +211,7 @@
 
                 if (tpdValue.canGetPrime) {
                     new Promise(function (resolve, reject) {
+                        loadingHandler()
                         TPDirect.card.getPrime((res) => {
                             if (res.status === 0) {
                                 resolve(res.card.prime)
@@ -265,6 +266,9 @@
                             $('.confirm-cover').add('confirm-cover--active')
                             $('.confirm-content').html(err)
                         })
+                        .finally(() => {
+                            loadingHandler()
+                        })
                     return
                 }
                 $('.confirm-cover').add('confirm-cover--active')
@@ -278,6 +282,7 @@
                     $ajax.get(model.userApiUrl),
                     $ajax.get(model.bookingApiUrl),
                 ]
+                loadingHandler()
                 Promise.all(promiseArr)
                     .then((values) => {
                         let username = values[0].data.name
@@ -322,6 +327,9 @@
                     .catch((err) => {
                         console.log(err)
                     })
+                    .finally(() => {
+                        loadingHandler()
+                    })
                 $('#delete').on('click', () => {
                     $('.confirm-cover').add('confirm-cover--active')
                     $('.confirm-content').html('是否取消行程?')
@@ -329,6 +337,8 @@
                     $('#confirm-sure').on('click', confirmDelBookHandler)
 
                     function confirmDelBookHandler() {
+                        loadingHandler()
+
                         fetch(model.bookingApiUrl, {
                             method: 'delete',
                             headers: new Headers({
@@ -355,6 +365,9 @@
                             })
                             .catch((err) => {
                                 console.log(err)
+                            })
+                            .finally(() => {
+                                loadingHandler()
                             })
                         $('#confirm-sure').removeOn(
                             'click',

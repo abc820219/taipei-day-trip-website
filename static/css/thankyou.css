@@ -12,9 +12,30 @@
     font-size: 18px;
 }
 
-.thankyou-list img{
-  display: block;
-  object-fit: cover;
-  width: 500px;
+.thankyou-list img {
+    display: block;
+    object-fit: cover;
+    width: 500px;
 }
 
+@media (max-width: 768px) {
+    .thankyou {
+        padding: 15px;
+    }
+
+    .thankyou h2 {
+        margin-bottom: 20px;
+        font-size: 16px;
+    }
+
+    .thankyou-list li {
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .thankyou-list img {
+        display: block;
+        object-fit: cover;
+        width: 100%;
+    }
+}

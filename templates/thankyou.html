@@ -2,6 +2,9 @@
 <link rel="stylesheet" href="../static/css/thankyou.css" />
 <section class="thankyou container"></section>
 <script>
+    function loadingHandler() {
+        document.querySelector('.loading-cover').classList.toggle('active')
+    }
     let hasSession = /session/gi.test(decodeURIComponent(document.cookie))
     if (!hasSession) {
         location.href = '/'
@@ -108,6 +111,8 @@
         // 事件綁定
         let controller = {
             initHandler() {
+                loadingHandler()
+
                 $ajax
                     .get(model.ordersUrl)
                     .then((res) => {
@@ -140,12 +145,14 @@
                             '<div style="text-align:center">查無此筆訂單<div>'
                         )
                     })
+                    .finally(() => {
+                        loadingHandler()
+                    })
             },
             eventBindHandler(isLogin = false) {},
         }
 
         // 註冊登入form
-
         controller.initHandler()
     })()
 </script>
